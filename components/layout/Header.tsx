@@ -22,20 +22,21 @@ export const Header: React.FC = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-xs font-medium uppercase tracking-wider text-taj-charcoal-muted">
-          <Link href="/" className="hover:text-taj-burgundy transition-colors">
+          <Link href="/" prefetch={true} className="hover:text-taj-burgundy transition-colors">
             Search
           </Link>
-          <Link href="/compare" className="hover:text-taj-burgundy transition-colors">
+          <Link href="/compare" prefetch={true} className="hover:text-taj-burgundy transition-colors">
             Compare
           </Link>
-          <Link href="/history" className="hover:text-taj-burgundy transition-colors">
+          <Link href="/history" prefetch={true} className="hover:text-taj-burgundy transition-colors">
             Saved History
           </Link>
-          <Link href="/tracked" className="hover:text-taj-burgundy transition-colors">
+          <Link href="/tracked" prefetch={true} className="hover:text-taj-burgundy transition-colors">
             Tracked Searches
           </Link>
           <Link
             href="/fetch-runs"
+            prefetch={true}
             className="text-taj-burgundy flex items-center gap-1.5 hover:opacity-80 transition-opacity"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />

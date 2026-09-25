@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getHolidaysInStayRange, getUpcomingLongWeekends } from '@/lib/holidays';
+import { LuxuryDatePicker } from './LuxuryDatePicker';
 
 export const SearchForm: React.FC = () => {
   const router = useRouter();
@@ -92,34 +93,15 @@ export const SearchForm: React.FC = () => {
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-end">
-          {/* Check-In */}
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-taj-gold-muted">
-              Check-In Date
-            </label>
-            <input
-              type="date"
-              value={checkIn}
-              onChange={(e) => setCheckIn(e.target.value)}
-              required
-              className="w-full border border-taj-gray-border px-3.5 py-2.5 text-xs bg-taj-cream text-taj-charcoal font-medium focus:outline-none focus:border-taj-burgundy focus:ring-1 focus:ring-taj-burgundy transition-colors"
-            />
-          </div>
-
-          {/* Check-Out */}
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-taj-gold-muted">
-              Check-Out Date
-            </label>
-            <input
-              type="date"
-              value={checkOut}
-              min={checkIn}
-              onChange={(e) => setCheckOut(e.target.value)}
-              required
-              className="w-full border border-taj-gray-border px-3.5 py-2.5 text-xs bg-taj-cream text-taj-charcoal font-medium focus:outline-none focus:border-taj-burgundy focus:ring-1 focus:ring-taj-burgundy transition-colors"
-            />
-          </div>
+          {/* Custom Taj Luxury Date Range Picker with auto +1 day checkout */}
+          <LuxuryDatePicker
+            checkIn={checkIn}
+            checkOut={checkOut}
+            onChange={(newCheckIn, newCheckOut) => {
+              setCheckIn(newCheckIn);
+              setCheckOut(newCheckOut);
+            }}
+          />
 
           {/* Adults */}
           <div className="space-y-1.5">

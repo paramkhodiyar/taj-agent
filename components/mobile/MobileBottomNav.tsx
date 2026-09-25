@@ -69,6 +69,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               <Link
                 key={item.label}
                 href={item.href}
+                prefetch={true}
                 className={`relative flex flex-col items-center justify-center flex-1 min-h-[48px] min-w-[48px] py-1 rounded-xl transition-all duration-150 active:scale-95 ${
                   active
                     ? 'text-taj-burgundy font-semibold'
