@@ -9,6 +9,7 @@ import { FeaturedCheapestCard } from '@/components/hotels/FeaturedCheapestCard';
 import { HotelCard } from '@/components/hotels/HotelCard';
 import { EmptySearchState } from '@/components/search/EmptySearchState';
 import { AgentLivePipeline } from '@/components/agent/AgentLivePipeline';
+import { MobileResultsView } from '@/components/mobile/MobileResultsView';
 
 function ResultsContent() {
   const searchParams = useSearchParams();
@@ -205,7 +206,21 @@ function ResultsContent() {
           isFetching={fetching}
         />
       ) : (
-        <div className="space-y-10">
+        <>
+          {/* Mobile-Only Dedicated Layout (Thumb Zone & 48px touch targets) */}
+          <MobileResultsView
+            data={data}
+            searchId={searchId || ''}
+            onRefresh={handleFetchLatest}
+            isRefreshing={fetching}
+            mealFilter={mealFilter}
+            setMealFilter={setMealFilter}
+            flexibleOnly={flexibleOnly}
+            setFlexibleOnly={setFlexibleOnly}
+          />
+
+          {/* Desktop-Only Layout (Preserved Exactly) */}
+          <div className="hidden md:block space-y-10">
           {/* Featured Cheapest Available Card */}
           {data?.cheapestAvailable && (
             <section className="space-y-3">
@@ -283,6 +298,7 @@ function ResultsContent() {
             </section>
           )}
         </div>
+      </>
       )}
     </div>
   );

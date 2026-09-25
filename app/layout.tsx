@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { MobileAppShell } from "@/components/mobile/MobileAppShell";
+
 export default function RootLayout({
   children,
 }: {
@@ -26,6 +28,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-taj-cream text-taj-charcoal antialiased selection:bg-taj-burgundy selection:text-taj-cream font-sans">
         {children}
+        <MobileAppShell />
       </body>
     </html>
   );

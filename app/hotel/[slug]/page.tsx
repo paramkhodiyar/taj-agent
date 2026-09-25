@@ -9,6 +9,7 @@ import { RoomRateTable } from '@/components/pricing/RoomRateTable';
 import { PriceStats } from '@/components/pricing/PriceStats';
 import { PriceHistoryChart, SnapshotHistoryPoint } from '@/components/pricing/PriceHistoryChart';
 import { computeFreshness } from '@/lib/freshness';
+import { MobileStickyActionBar } from '@/components/mobile/MobileStickyActionBar';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -313,6 +314,22 @@ export default async function HotelDetailPage({
             </div>
           </div>
         </section>
+
+        {/* Mobile Sticky Thumb-Zone Action Bar */}
+        {leadSnapshot && (
+          <MobileStickyActionBar
+            hotelName={hotel.canonicalName}
+            pricePerNight={Number(leadSnapshot.pricePerNight)}
+            isPlusTaxes={!leadSnapshot.taxAmount || Number(leadSnapshot.taxAmount) === 0}
+            bookingUrl={hotel.officialBookingUrl || `https://www.tajhotels.com/en-in/hotels/${hotel.slug}/`}
+            breakfastIncluded={
+              leadSnapshot.mealPlan?.toLowerCase().includes('breakfast') ||
+              leadSnapshot.ratePlan?.canonicalRateName.toLowerCase().includes('breakfast') ||
+              leadSnapshot.ratePlan?.canonicalRateName.toLowerCase().includes('bed and breakfast') ||
+              leadSnapshot.ratePlan?.canonicalRateName.toLowerCase().includes('map')
+            }
+          />
+        )}
       </main>
 
       <Footer />
