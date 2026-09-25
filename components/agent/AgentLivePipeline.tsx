@@ -1,6 +1,5 @@
-'use client';
-
 import React from 'react';
+import { TajLogo3DLoader } from '@/components/3d/TajLogo3DLoader';
 
 interface AgentLivePipelineProps {
   statusText?: string | null;
@@ -14,13 +13,15 @@ export const AgentLivePipeline: React.FC<AgentLivePipelineProps> = ({
   checkOut,
 }) => {
   return (
-    <div className="border-2 border-taj-gold/50 bg-white p-8 sm:p-12 text-center max-w-3xl mx-auto space-y-8 my-8 shadow-sm">
-      {/* Official Taj Crest with pulsing gold ring */}
-      <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
-        <div className="absolute inset-0 rounded-full border-2 border-taj-gold/30 animate-ping opacity-30" />
-        <div className="w-16 h-16 rounded-full bg-taj-cream border border-taj-gold flex items-center justify-center p-2.5">
-          <img src="/taj-logo.svg" alt="Taj Official Crest" className="w-full h-full object-contain" />
-        </div>
+    <div className="border-2 border-taj-gold/50 bg-white p-8 sm:p-12 text-center max-w-3xl mx-auto space-y-6 my-8 rounded-2xl">
+      {/* Official Taj Emblem Assembling Piece by Piece */}
+      <div className="flex justify-center">
+        <TajLogo3DLoader
+          size={84}
+          theme="light"
+          autoReassemble={true}
+          replayIntervalMs={4200}
+        />
       </div>
 
       <div className="space-y-2">
@@ -38,9 +39,9 @@ export const AgentLivePipeline: React.FC<AgentLivePipelineProps> = ({
       </div>
 
       {/* Progress status card */}
-      <div className="bg-taj-cream border border-taj-gray-border p-4 text-left space-y-3">
+      <div className="bg-taj-cream border border-taj-gray-border p-4 text-left space-y-3 rounded-xl">
         <div className="flex items-center gap-3">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse shrink-0" />
+          <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
           <p className="text-xs font-medium text-taj-charcoal">
             {statusText || 'Querying official Taj reservation infrastructure & running multi-stage validation…'}
           </p>
@@ -57,7 +58,7 @@ export const AgentLivePipeline: React.FC<AgentLivePipelineProps> = ({
             <span>Agentic AI extractor analyzing live room tiers & nightly tariffs</span>
           </div>
           <div className="flex items-center gap-2 text-taj-gold-muted font-medium">
-            <span className="animate-spin text-xs">⟳</span>
+            <span className="text-xs text-taj-gold font-bold">●</span>
             <span>Validating meal plans, cancellation policies, and anomaly drop thresholds</span>
           </div>
           <div className="flex items-center gap-2 text-taj-gray-warm">

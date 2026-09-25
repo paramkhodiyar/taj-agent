@@ -186,20 +186,20 @@ export const LuxuryDatePicker: React.FC<LuxuryDatePickerProps> = ({
               setIsOpen(true);
             }
           }}
-          className={`cursor-pointer p-3 border rounded-xl bg-taj-cream transition-all duration-150 ${
+          className={`cursor-pointer h-[62px] p-2.5 sm:p-3 border rounded-xl bg-taj-cream flex flex-col justify-between transition-all duration-150 ${
             isOpen && activeField === 'checkIn'
-              ? 'border-taj-burgundy ring-2 ring-taj-burgundy/20 bg-white'
+              ? 'border-taj-burgundy ring-1 ring-taj-burgundy bg-white'
               : 'border-taj-gray-border hover:border-taj-gold/80 hover:bg-white'
           }`}
         >
-          <span className="block text-[9px] font-semibold uppercase tracking-[0.16em] text-taj-gold-muted">
+          <span className="block text-[9px] font-semibold uppercase tracking-[0.16em] text-taj-gold-muted leading-none">
             Check-In
           </span>
-          <div className="flex items-center justify-between mt-1">
-            <span className="text-xs sm:text-sm font-semibold text-taj-charcoal font-sans">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-xs xl:text-[13px] font-semibold text-taj-charcoal font-sans whitespace-nowrap truncate">
               {formatDisplay(checkIn)}
             </span>
-            <CalendarIcon className="w-3.5 h-3.5 text-taj-gold stroke-[2]" />
+            <CalendarIcon className="w-3.5 h-3.5 text-taj-gold stroke-[2] flex-shrink-0" />
           </div>
         </div>
 
@@ -220,33 +220,33 @@ export const LuxuryDatePicker: React.FC<LuxuryDatePickerProps> = ({
               setIsOpen(true);
             }
           }}
-          className={`cursor-pointer p-3 border rounded-xl bg-taj-cream transition-all duration-150 ${
+          className={`cursor-pointer h-[62px] p-2.5 sm:p-3 border rounded-xl bg-taj-cream flex flex-col justify-between transition-all duration-150 ${
             isOpen && activeField === 'checkOut'
-              ? 'border-taj-burgundy ring-2 ring-taj-burgundy/20 bg-white'
+              ? 'border-taj-burgundy ring-1 ring-taj-burgundy bg-white'
               : 'border-taj-gray-border hover:border-taj-gold/80 hover:bg-white'
           }`}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between leading-none">
             <span className="block text-[9px] font-semibold uppercase tracking-[0.16em] text-taj-gold-muted">
               Check-Out
             </span>
-            <span className="inline-flex items-center gap-0.5 text-[9px] font-medium text-taj-burgundy bg-taj-cream-warm px-1.5 py-0.2 rounded-full border border-taj-gold/30">
+            <span className="inline-flex items-center gap-0.5 text-[9px] font-medium text-taj-burgundy bg-taj-cream-warm px-1.5 py-0.5 rounded-full border border-taj-gold/30">
               <Moon className="w-2.5 h-2.5 text-taj-gold" />
-              {getNights()} {getNights() === 1 ? 'Night' : 'Nights'}
+              {getNights()}N
             </span>
           </div>
-          <div className="flex items-center justify-between mt-1">
-            <span className="text-xs sm:text-sm font-semibold text-taj-charcoal font-sans">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-xs xl:text-[13px] font-semibold text-taj-charcoal font-sans whitespace-nowrap truncate">
               {formatDisplay(checkOut)}
             </span>
-            <CalendarIcon className="w-3.5 h-3.5 text-taj-gold stroke-[2]" />
+            <CalendarIcon className="w-3.5 h-3.5 text-taj-gold stroke-[2] flex-shrink-0" />
           </div>
         </div>
       </div>
 
-      {/* Popover Custom Luxury Calendar */}
+      {/* Popover Custom Luxury Calendar - Zero Shadows */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 sm:right-auto sm:w-[350px] mt-2 z-50 bg-white border border-taj-gray-border/90 rounded-2xl shadow-[0_18px_50px_rgba(36,8,15,0.18)] p-4 animate-fade-in">
+        <div className="absolute top-full left-0 right-0 sm:right-auto sm:w-[350px] mt-2 z-50 bg-white border-2 border-taj-gold/40 rounded-2xl p-4 animate-fade-in">
           {/* Header Month / Year & Navigation */}
           <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-taj-gray-border/60">
             <button

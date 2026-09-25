@@ -10,6 +10,7 @@ import { HotelCard } from '@/components/hotels/HotelCard';
 import { EmptySearchState } from '@/components/search/EmptySearchState';
 import { AgentLivePipeline } from '@/components/agent/AgentLivePipeline';
 import { MobileResultsView } from '@/components/mobile/MobileResultsView';
+import { TajPageLoader } from '@/components/layout/TajPageLoader';
 
 function ResultsContent() {
   const searchParams = useSearchParams();
@@ -189,12 +190,11 @@ function ResultsContent() {
       )}
 
       {loading ? (
-        <div className="py-20 text-center space-y-3">
-          <div className="w-8 h-8 border-2 border-taj-gold border-t-transparent animate-spin mx-auto" />
-          <p className="text-xs uppercase tracking-widest text-taj-gold-muted">
-            Querying Historical Database…
-          </p>
-        </div>
+        <TajPageLoader
+          title="Querying Price Intelligence"
+          subtitle="Accessing verified observation logs and historical property rates…"
+          type="results"
+        />
       ) : !data ? (
         <div className="py-20 text-center space-y-4">
           <p className="text-sm font-serif text-taj-charcoal-muted">
@@ -323,12 +323,11 @@ export default function ResultsPage() {
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <Suspense
           fallback={
-            <div className="py-20 text-center space-y-3">
-              <div className="w-8 h-8 border-2 border-taj-gold border-t-transparent animate-spin mx-auto" />
-              <p className="text-xs uppercase tracking-widest text-taj-gold-muted">
-                Initializing search parameters…
-              </p>
-            </div>
+            <TajPageLoader
+              title="Initializing Search"
+              subtitle="Accessing verified observation logs and historical property rates…"
+              type="results"
+            />
           }
         >
           <ResultsContent />

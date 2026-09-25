@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ChevronDown } from 'lucide-react';
 import { getHolidaysInStayRange, getUpcomingLongWeekends } from '@/lib/holidays';
 import { LuxuryDatePicker } from './LuxuryDatePicker';
 
@@ -84,7 +85,7 @@ export const SearchForm: React.FC = () => {
     <div className="w-full max-w-5xl mx-auto space-y-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white border-2 border-taj-gold/40 p-5 sm:p-6 transition-all duration-300 shadow-sm"
+        className="bg-white border-2 border-taj-gold/40 rounded-2xl p-4 sm:p-5 transition-all"
       >
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-xs text-taj-status-failed">
@@ -92,8 +93,9 @@ export const SearchForm: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-end">
-          {/* Custom Taj Luxury Date Range Picker with auto +1 day checkout */}
+        {/* 5 Completely Uniform Fields (Check-In, Check-Out, Guests, Rooms, Submit) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center">
+          {/* Custom Taj Luxury Date Range Picker with auto +1 day checkout (Takes 2 cols) */}
           <LuxuryDatePicker
             checkIn={checkIn}
             checkOut={checkOut}
@@ -103,15 +105,22 @@ export const SearchForm: React.FC = () => {
             }}
           />
 
-          {/* Adults */}
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-taj-gold-muted">
-              Guests (Adults 12+)
-            </label>
+          {/* Guests — Uniform h-[62px] Card */}
+          <div className="relative h-[62px] p-2.5 sm:p-3 border border-taj-gray-border rounded-xl bg-taj-cream hover:bg-white hover:border-taj-gold/80 transition-all flex flex-col justify-between cursor-pointer">
+            <span className="block text-[9px] font-semibold uppercase tracking-[0.16em] text-taj-gold-muted leading-none">
+              Guests (12+)
+            </span>
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-xs xl:text-[13px] font-semibold text-taj-charcoal font-sans whitespace-nowrap">
+                {adults} {adults === 1 ? 'Adult' : 'Adults'}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-taj-gold stroke-[2] flex-shrink-0" />
+            </div>
             <select
               value={adults}
               onChange={(e) => setAdults(Number(e.target.value))}
-              className="w-full border border-taj-gray-border px-3.5 py-2.5 text-xs bg-taj-cream text-taj-charcoal font-medium focus:outline-none focus:border-taj-burgundy focus:ring-1 focus:ring-taj-burgundy transition-colors"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-base"
+              aria-label="Guests"
             >
               {[1, 2, 3, 4, 5, 6].map((num) => (
                 <option key={num} value={num}>
@@ -121,15 +130,22 @@ export const SearchForm: React.FC = () => {
             </select>
           </div>
 
-          {/* Rooms */}
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-taj-gold-muted">
+          {/* Rooms — Uniform h-[62px] Card */}
+          <div className="relative h-[62px] p-2.5 sm:p-3 border border-taj-gray-border rounded-xl bg-taj-cream hover:bg-white hover:border-taj-gold/80 transition-all flex flex-col justify-between cursor-pointer">
+            <span className="block text-[9px] font-semibold uppercase tracking-[0.16em] text-taj-gold-muted leading-none">
               Rooms
-            </label>
+            </span>
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-xs xl:text-[13px] font-semibold text-taj-charcoal font-sans whitespace-nowrap">
+                {rooms} {rooms === 1 ? 'Room' : 'Rooms'}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-taj-gold stroke-[2] flex-shrink-0" />
+            </div>
             <select
               value={rooms}
               onChange={(e) => setRooms(Number(e.target.value))}
-              className="w-full border border-taj-gray-border px-3.5 py-2.5 text-xs bg-taj-cream text-taj-charcoal font-medium focus:outline-none focus:border-taj-burgundy focus:ring-1 focus:ring-taj-burgundy transition-colors"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-base"
+              aria-label="Rooms"
             >
               {[1, 2, 3, 4].map((num) => (
                 <option key={num} value={num}>
@@ -139,16 +155,14 @@ export const SearchForm: React.FC = () => {
             </select>
           </div>
 
-          {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-taj-burgundy hover:bg-taj-burgundy-deep text-white font-serif font-medium text-xs tracking-[0.15em] uppercase border border-taj-burgundy transition-all duration-200 cursor-pointer disabled:opacity-50"
-            >
-              {loading ? 'Initiating Pipeline…' : 'Discover Rates →'}
-            </button>
-          </div>
+          {/* Submit Button — Uniform h-[62px] Card */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="h-[62px] w-full rounded-xl bg-taj-burgundy hover:bg-taj-burgundy-deep text-white font-serif font-semibold text-xs tracking-[0.15em] uppercase border border-taj-burgundy transition-all active:scale-[0.98] flex items-center justify-center p-3 cursor-pointer disabled:opacity-50"
+          >
+            {loading ? 'Initiating…' : 'Discover Rates →'}
+          </button>
         </div>
 
         {/* Holiday Banner if matching */}

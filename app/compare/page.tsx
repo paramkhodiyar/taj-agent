@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { PriceDisplay } from '@/components/pricing/PriceDisplay';
 import { FreshnessBadge } from '@/components/pricing/FreshnessBadge';
+import { TajPageLoader } from '@/components/layout/TajPageLoader';
 import Link from 'next/link';
 
 function CompareContent() {
@@ -121,12 +122,10 @@ function CompareContent() {
       </div>
 
       {loading ? (
-        <div className="py-20 text-center space-y-3">
-          <div className="w-8 h-8 border-2 border-taj-gold border-t-transparent animate-spin mx-auto" />
-          <p className="text-xs uppercase tracking-widest text-taj-gold-muted">
-            Building comparison matrix…
-          </p>
-        </div>
+        <TajPageLoader
+          title="Building Comparison Matrix"
+          subtitle="Aligning room tiers, inclusions, and historical rates across selected properties…"
+        />
       ) : hotels.length === 0 ? (
         <div className="border border-taj-gray-border bg-white p-12 text-center text-xs text-taj-gray-warm">
           No properties selected for comparison. Add hotel slugs to the URL parameters.
@@ -291,12 +290,10 @@ export default function ComparePage() {
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
         <Suspense
           fallback={
-            <div className="py-20 text-center space-y-3">
-              <div className="w-8 h-8 border-2 border-taj-gold border-t-transparent animate-spin mx-auto" />
-              <p className="text-xs uppercase tracking-widest text-taj-gold-muted">
-                Loading comparison…
-              </p>
-            </div>
+            <TajPageLoader
+              title="Loading Comparison"
+              subtitle="Aligning room tiers, inclusions, and historical rates across selected properties…"
+            />
           }
         >
           <CompareContent />
