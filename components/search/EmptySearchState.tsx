@@ -18,8 +18,13 @@ export const EmptySearchState: React.FC<EmptySearchStateProps> = ({
 }) => {
   return (
     <div className="border border-taj-gray-border bg-white p-8 sm:p-12 text-center max-w-2xl mx-auto space-y-6">
-      <div className="w-12 h-12 border border-taj-gold text-taj-gold flex items-center justify-center mx-auto text-xl font-serif">
-        T
+      {/* Official Taj Emblem Crest */}
+      <div className="w-16 h-16 rounded-2xl bg-taj-cream border border-taj-gold/50 flex items-center justify-center mx-auto p-3">
+        <img
+          src="/taj-logo.svg"
+          alt="Taj Official Crest"
+          className="w-10 h-10 object-contain"
+        />
       </div>
 
       <div className="space-y-2">
