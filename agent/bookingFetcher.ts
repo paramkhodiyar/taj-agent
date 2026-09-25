@@ -203,8 +203,28 @@ No markdown wrapping, no explanation, only the raw JSON array.`;
 }
 
 /**
- * Standard baseline inventory generator for canonical Taj properties
+ * Lightweight deterministic hash — no crypto dependency needed.
+ * Produces a stable float in [0, 1) from an arbitrary string seed.
+ * Same seed → same value; different seeds → different values.
+ */
+function seededRandom(seed: string): number {
+  let hash = 5381;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 33) ^ seed.charCodeAt(i);
+    hash = hash >>> 0; // Keep 32-bit unsigned
+  }
+  // Map to [0, 1)
+  return (hash % 10000) / 10000;
+}
+
+/**
+ * Standard baseline inventory generator for canonical Taj properties.
  * Reflects authentic Taj room tiers, meal packages, and pricing structures.
+ *
+ * Uses a deterministic date+hotel seed so that:
+ *  - The same check-in date always yields the same price (reproducible)
+ *  - Different dates produce different prices (±20% demand variance)
+ * This makes the 30-day price history chart show meaningful variation.
  */
 function generateBaselineInventory(
   hotel: ResolvedProperty,
@@ -214,60 +234,75 @@ function generateBaselineInventory(
   const checkOut = new Date(search.checkOut);
   const diffDays = Math.max(1, Math.round((checkOut.getTime() - checkIn.getTime()) / (86400000)));
 
-  // Base multiplier depending on luxury heritage tier
+  // Canonical base rate by hotel tier
   let baseRate = 22000;
   if (/palace/i.test(hotel.canonicalName)) baseRate = 38000;
-  else if (/exotica|resort|spa/i.test(hotel.canonicalName)) baseRate = 26000;
+  else if (/exotica|resort.*spa|spa.*resort/i.test(hotel.canonicalName)) baseRate = 26000;
+  else if (/resort/i.test(hotel.canonicalName)) baseRate = 25000;
   else if (/lands end|santacruz/i.test(hotel.canonicalName)) baseRate = 24000;
+  else if (/falaknuma/i.test(hotel.canonicalName)) baseRate = 42000;
+  else if (/rambagh|umaid/i.test(hotel.canonicalName)) baseRate = 45000;
+  else if (/lake palace/i.test(hotel.canonicalName)) baseRate = 55000;
 
-  // Weekend adjustment based on checkIn day of week (Friday=5, Saturday=6)
+  // Deterministic demand variance: ±20% based on check-in date + hotel
+  const checkInStr = checkIn.toISOString().split('T')[0];
+  const demandSeed = `${hotel.hotelId}:${checkInStr}`;
+  const demandFactor = 0.82 + seededRandom(demandSeed) * 0.38; // Range: 0.82 to 1.20
+
+  // Weekend uplift (Friday=5, Saturday=6)
   const day = checkIn.getDay();
-  if (day === 5 || day === 6) {
-    baseRate = Math.round(baseRate * 1.15);
-  }
+  const weekendFactor = (day === 5 || day === 6) ? 1.15 : 1.0;
 
-  const taxRate = 0.18; // 18% GST standard in India for luxury hospitality
+  // Season uplift — Oct–Feb is peak travel season in India
+  const month = checkIn.getMonth(); // 0-indexed
+  const peakMonths = [9, 10, 11, 0, 1]; // Oct, Nov, Dec, Jan, Feb
+  const seasonFactor = peakMonths.includes(month) ? 1.12 : 1.0;
+
+  // Compose effective nightly base for the Deluxe Room
+  const effectiveBase = Math.round(baseRate * demandFactor * weekendFactor * seasonFactor / 500) * 500;
+
+  const taxRate = 0.18; // 18% GST standard for luxury hospitality in India
 
   const rooms = [
     {
       name: 'Deluxe Room City View King Bed',
       rateName: 'Best Available Rate (Room Only)',
-      price: baseRate,
+      price: effectiveBase,
       meal: 'Room only',
       cancellation: 'Flexible cancellation up to 48 hours prior to check-in',
     },
     {
       name: 'Deluxe Room City View King Bed',
       rateName: 'Taj Bed & Breakfast Experience',
-      price: baseRate + 2500,
+      price: effectiveBase + 2500,
       meal: 'Breakfast included',
       cancellation: 'Flexible cancellation up to 48 hours prior to check-in',
     },
     {
       name: 'Luxury Room Palace / Sea View',
       rateName: 'Best Available Rate (Room Only)',
-      price: baseRate + 6000,
+      price: effectiveBase + 6000,
       meal: 'Room only',
       cancellation: 'Flexible cancellation up to 48 hours prior to check-in',
     },
     {
       name: 'Luxury Room Palace / Sea View',
       rateName: 'Taj Experiential Dining Rate (Breakfast & Dinner)',
-      price: baseRate + 11000,
+      price: effectiveBase + 11000,
       meal: 'Breakfast & Dinner included',
       cancellation: 'Flexible cancellation up to 72 hours prior to check-in',
     },
     {
       name: 'Taj Club Room with Cocktail Hour & Butler Service',
       rateName: 'Taj Club Privileges Rate',
-      price: baseRate + 15000,
+      price: effectiveBase + 15000,
       meal: 'Breakfast included',
       cancellation: 'Flexible cancellation up to 48 hours prior to check-in',
     },
     {
       name: 'Executive Suite',
       rateName: 'Executive Suite Best Available Rate',
-      price: baseRate + 28000,
+      price: effectiveBase + 28000,
       meal: 'Breakfast included',
       cancellation: 'Flexible cancellation up to 7 days prior to check-in',
     },
