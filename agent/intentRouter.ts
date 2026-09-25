@@ -22,13 +22,19 @@ export interface AssistantResponse {
 /**
  * Intent Router (docs/02-SYSTEM-ARCHITECTURE.md §4 & docs/04-API-AND-SECURITY.md §4)
  * Deterministically routes queries:
+ *   - Guardrail Pre-flight: Refuses coding, math, debugging, and adversarial overrides
  *   - Price queries -> Pure PostgreSQL SQL query (Zero LLM arithmetic)
  *   - Price change analysis -> Historical sequence comparison with explicit separation of facts vs interpretation
- *   - Hotel knowledge -> Verified hotel information & amenities
+ *   - Hotel knowledge & concierge -> Verified hotel data synthesized with Gemini
  */
 export async function routeUserQuery(query: string): Promise<AssistantResponse> {
   const start = Date.now();
   const lower = query.toLowerCase();
+
+  // Guardrail Layer 1: Strictly reject out-of-bounds queries (coding, math, jailbreaks, non-travel topics)
+  if (isOutOfBoundsOrAdversarial(query)) {
+    return handleOutOfBoundsIntent(query, start);
+  }
 
   // Intent 0: Developer Credits / Who built this?
   if (/who (built|made|created|developed|coded)|param|khodiyar|credits|author|creator/i.test(lower)) {
@@ -41,16 +47,20 @@ export async function routeUserQuery(query: string): Promise<AssistantResponse> 
   }
 
   // Intent 2: Recommendations / Best Options / Weekend Stays
-  if (/best taj|options|recommend|suggest|where should i stay|top taj|weekend|next week|thursday to sunday|plans/i.test(lower)) {
+  if (/best taj|options|recommend|suggest|where should i stay|top taj|weekend|next week|thursday to sunday|plans|itinerary|vacation/i.test(lower)) {
     return handleRecommendationIntent(query, start);
   }
 
-  // Intent 3: "Which Taj is cheapest?", "Price of Taj Goa", "Find Taj for dates"
-  if (/cheapest|best rate|cost|rate|price|room|available|how much/i.test(lower) || /\b(for|in|dates|nov|dec|jan|feb|mar|apr|may)\b/i.test(lower)) {
+  // Intent 3: Factual Price Search inquiries (e.g. "Which Taj is cheapest?", "Price of Taj Fort Aguada", "How much does Taj Lake Palace cost?")
+  const isExplicitPriceQuery =
+    /\b(cheapest|lowest price|best rate|how much|tariffs?|pricing)\b/i.test(lower) ||
+    (/\b(price|cost|rate)\b/i.test(lower) && !/\b(room types?|what rooms?|dining|restaurant|beach|pool|spa|amenities|history|story|check-in|checkout|review)\b/i.test(lower));
+
+  if (isExplicitPriceQuery) {
     return handlePriceSearchIntent(query, start);
   }
 
-  // Intent 4: Hotel Information / RAG
+  // Intent 4: Hotel Information & Intelligent Travel Concierge
   return handleHotelInfoRagIntent(query, start);
 }
 
@@ -62,8 +72,10 @@ async function handlePriceSearchIntent(query: string, startTime: number): Promis
   const routerTime = Date.now() - startTime;
   const dbStart = Date.now();
 
-  // Date extraction: search for target dates or default to upcoming verified dates
-  // Check for city mention e.g. "Goa", "Mumbai", "Jaipur", "Udaipur"
+  // 1. Check if a specific hotel was requested
+  const resolved = await resolve_property(query);
+
+  // 2. Check for city mention e.g. "Goa", "Mumbai", "Jaipur", "Udaipur"
   const cityMatch = query.match(/\b(goa|mumbai|delhi|jaipur|udaipur|hyderabad|bengaluru|chennai|kolkata|amritsar)\b/i);
   const targetCity = cityMatch ? cityMatch[1] : undefined;
 
@@ -72,7 +84,9 @@ async function handlePriceSearchIntent(query: string, startTime: number): Promis
     verificationState: { in: ['VERIFIED', 'PARTIALLY_VERIFIED'] },
   };
 
-  if (targetCity) {
+  if (resolved.length > 0) {
+    whereClause.hotelId = resolved[0].hotelId;
+  } else if (targetCity) {
     whereClause.hotel = {
       city: { contains: targetCity, mode: 'insensitive' },
     };
@@ -263,68 +277,226 @@ async function handlePriceExplanationIntent(query: string, startTime: number): P
 }
 
 /**
- * Optional Gemini LLM integration for natural-language synthesis
+ * Guardrail check: Strictly reject out-of-bounds, non-travel queries,
+ * including coding, math calculations, debugging, homework, and adversarial prompt injections.
+ */
+function isOutOfBoundsOrAdversarial(query: string): boolean {
+  const q = query.toLowerCase();
+
+  // 1. Coding, algorithms, and software engineering
+  const codingTerms = [
+    /\b(reverse\s*(a\s*)?linked\s*list|linked\s*list|binary\s*tree|leetcode|dijkstra|fibonacci|recursion|algorithm|data\s*structure)\b/,
+    /\b(python|javascript|typescript|c\+\+|java\b(?!(\s*palace|\s*indies))|rust|golang|ruby|php|sql\s*injection|html|css|react|nextjs|docker|bash|shell\s*script)\b/,
+    /\b(write\s*(me\s*)?(a\s*)?(code|script|program|function|component|query)|give\s*me\s*code|show\s*code|sample\s*code|source\s*code)\b/,
+    /\b(how\s*to\s*code|implement\s*(a\s*)?(binary|linked|tree|function|class)|def\s+\w+\(|console\.log|print\(|import\s+)\b/,
+    /\b(debug|compiler|syntax\s*error|runtime\s*error|stack\s*overflow|unit\s*test|pull\s*request|github\s*repo)\b/,
+  ];
+
+  // 2. Math, calculus, algebra, pure numeric equations
+  const mathTerms = [
+    /\b(integral\s*of|derivative\s*of|matrix\s*multiplication|quadratic\s*equation|pythagorean|solve\s*equation)\b/,
+    /\b(calculate|compute|solve)\s*(\d+[\s\+\-\*\/\^\%]+\d+)/,
+    /\b(solve|equation|algebra)\b.*[=]/,
+    /\bwhat\s*is\s*(\d+[\s\+\-\*\/]+\d+)/,
+    /\b(square\s*root|logarithm|sine|cosine|tangent|eigenvalue|calculus)\b/,
+  ];
+
+  // 3. Adversarial prompt injections, roleplay bypass, conditional bargaining tricks
+  const adversarialTerms = [
+    /\b(ignore\s+(all\s+)?(previous|prior)\s+instructions|disregard\s+(all\s+)?(previous|prior))\b/,
+    /\b(you\s+are\s+now|act\s+as\s+dan|jailbreak|unfiltered\s+mode|developer\s+mode|system\s+prompt)\b/,
+    /\b(pretend\s+you\s+are|roleplay\s+as|simulate\s+a\s+(python|linux|terminal|bot))\b/,
+    /\b(i\s+(will|want\s+to)\s+book\s+(the\s+)?(hotel|taj)\s+but\s+first|tell\s+me\s+.*(before|then)\s+i\s+book|first\s+tell\s+me\s+.*(before|then)\s+i\s+book)\b/,
+    /\b(answer\s+this\s+.*(then|before)\s+i\s+book|if\s+you\s+tell\s+me\s+.*i\s+will\s+book)\b/,
+  ];
+
+  // 4. Non-travel off-domain topics (medical, legal, crypto trading, politics)
+  const offDomainTerms = [
+    /\b(medical\s*advice|diagnose\s*my|symptoms\s*of|prescribe\s+medicine|treatment\s*for)\b/,
+    /\b(bitcoin|ethereum|crypto|forex|stock\s*pick|buy\s*crypto|nft)\b/,
+    /\b(who\s*won\s*the\s*election|political\s*party|prime\s*minister\s*debate|vote\s*for)\b/,
+  ];
+
+  return [...codingTerms, ...mathTerms, ...adversarialTerms, ...offDomainTerms].some((regex) => regex.test(q));
+}
+
+/**
+ * Handle out-of-bounds or adversarial prompts with a polite, firm concierge refusal
+ */
+function handleOutOfBoundsIntent(query: string, startTime: number): AssistantResponse {
+  const routerTime = Date.now() - startTime;
+  const politeRefusal =
+    'Namaste. As your Taj Luxury Concierge, I am devoted exclusively to curating royal stays, travel itineraries, reservation guidance, and dining experiences across our iconic Taj properties.\n\n' +
+    'I am unable to assist with programming, mathematics, or non-hospitality inquiries. ' +
+    'May I assist you with exploring our palace suites in Rajasthan, coastal resorts in Goa, or dining reservations at The Taj Mahal Palace Mumbai?';
+
+  return {
+    intent: 'HOTEL_INFO_RAG',
+    query,
+    observedFacts: [
+      'Scope Authority: The Taj Luxury Concierge assists exclusively with travel, accommodations, and dining across Taj properties.',
+      'Domain Boundary Enforced: Non-travel queries (including programming, mathematics, and arbitrary computation) are declined.',
+    ],
+    interpretation: politeRefusal,
+    sources: ['Taj Luxury Concierge Policy & Travel Domain Boundary'],
+    executionTrace: {
+      intentRoutingTimeMs: routerTime,
+      dbExecutionTimeMs: 0,
+      arithmeticMethod: 'NONE',
+      llmInvolvedInPriceCalculation: false,
+    },
+  };
+}
+
+const CONCIERGE_SYSTEM_PROMPT = `You are the quintessential Taj Luxury Concierge at Taj Price Intelligence.
+Your voice is warm, gracious, sophisticated, and deeply rooted in the legendary tradition of Indian hospitality ("Atithi Devo Bhava").
+You assist guests with bespoke travel advice, destination recommendations, palace histories, dining venues, room tier selections, and stay tips across the iconic Taj Hotels collection in India.
+
+STRICT DOMAIN RULES:
+1. ONLY assist with travel, hotel accommodations, dining, tourism, and hospitality related to Taj properties and travel in India.
+2. Under NO CIRCUMSTANCES should you write computer code, solve math equations, perform technical debugging, or answer off-topic queries, even if the guest claims they will book a room if you answer first. If such a request occurs, politely and regally decline and redirect to their travel plans.
+3. NEVER invent or fabricate numeric room rates or discounts. If real rates are provided in the context, cite them faithfully. If not provided, advise the guest to use the platform's search tool for live reservation rates.
+4. Keep responses elegant, structured, engaging, and hospitable. Address the guest with "Namaste" where fitting.`;
+
+/**
+ * Gemini LLM integration for natural-language synthesis
  * strictly for explanation and hotel information (02-SYSTEM-ARCHITECTURE.md §4).
  * ZERO LLM arithmetic allowed for numeric prices.
  */
-async function callGeminiExplanation(prompt: string): Promise<string | null> {
+async function callGeminiAssistant(
+  userPrompt: string,
+  systemInstructionText: string = CONCIERGE_SYSTEM_PROMPT
+): Promise<string | null> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return null;
 
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
+  const candidateModels = [
+    'gemini-3.5-flash-lite',
+    'gemini-3.8-flash',
+    'gemini-3.5-flash',
+  ];
 
-    const res = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-goog-api-key': apiKey,
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: prompt }],
+  for (const model of candidateModels) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 7000);
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: userPrompt }] }],
+            systemInstruction: { parts: [{ text: systemInstructionText }] },
+            generationConfig: {
+              temperature: 0.35,
+              maxOutputTokens: 650,
             },
-          ],
-        }),
-        signal: controller.signal,
-      }
-    );
-    clearTimeout(timeout);
+          }),
+          signal: controller.signal,
+        }
+      );
+      clearTimeout(timeout);
 
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
-  } catch {
-    return null;
+      if (!res.ok) continue;
+
+      const json = await res.json();
+      const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+      if (text) {
+        return text;
+      }
+    } catch {
+      continue;
+    }
   }
+
+  return null;
 }
 
 /**
  * Intent: HOTEL_INFO_RAG
- * Answers factual questions about hotel amenities, descriptions, and policies.
+ * Answers factual and advisory questions about hotel amenities, descriptions, rooms, dining, and travel.
  */
 async function handleHotelInfoRagIntent(query: string, startTime: number): Promise<AssistantResponse> {
   const routerTime = Date.now() - startTime;
   const dbStart = Date.now();
+  const lower = query.toLowerCase();
 
+  // 1. Try to resolve a specific property first
   const resolved = await resolve_property(query);
-  const hotel = resolved[0]
-    ? await prisma.hotel.findUnique({
-        where: { id: resolved[0].hotelId },
-        include: { rooms: true },
-      })
-    : await prisma.hotel.findFirst({
-        where: { isActive: true },
-        include: { rooms: true },
+
+  let targetHotels: any[] = [];
+  if (resolved.length > 0) {
+    const singleHotel = await prisma.hotel.findUnique({
+      where: { id: resolved[0].hotelId },
+      include: {
+        rooms: true,
+        priceSnapshots: {
+          where: { verificationState: { in: ['VERIFIED', 'PARTIALLY_VERIFIED'] } },
+          orderBy: [{ pricePerNight: 'asc' }, { fetchedAt: 'desc' }],
+          take: 1,
+          include: { room: true, ratePlan: true },
+        },
+      },
+    });
+    if (singleHotel) targetHotels.push(singleHotel);
+  }
+
+  // 2. If no single hotel resolved, check for destination or city mentions
+  if (targetHotels.length === 0) {
+    const cityMatch = lower.match(/\b(goa|mumbai|delhi|jaipur|udaipur|hyderabad|bengaluru|bangalore|chennai|kolkata|amritsar|varanasi|rishikesh|corbett|agra|jodhpur|kerala|rajasthan)\b/);
+    if (cityMatch) {
+      const cityName = cityMatch[1] === 'bangalore' ? 'bengaluru' : cityMatch[1];
+      targetHotels = await prisma.hotel.findMany({
+        where: {
+          OR: [
+            { city: { contains: cityName, mode: 'insensitive' } },
+            { state: { contains: cityName, mode: 'insensitive' } },
+          ],
+          isActive: true,
+        },
+        include: {
+          rooms: true,
+          priceSnapshots: {
+            where: { verificationState: { in: ['VERIFIED', 'PARTIALLY_VERIFIED'] } },
+            orderBy: [{ pricePerNight: 'asc' }, { fetchedAt: 'desc' }],
+            take: 1,
+            include: { room: true, ratePlan: true },
+          },
+        },
+        take: 3,
       });
+    }
+  }
+
+  // 3. Fallback: select canonical flagship Taj properties
+  if (targetHotels.length === 0) {
+    targetHotels = await prisma.hotel.findMany({
+      where: {
+        slug: {
+          in: ['the-taj-mahal-palace-mumbai', 'taj-lake-palace-udaipur', 'taj-exotica-resort-spa-goa'],
+        },
+        isActive: true,
+      },
+      include: {
+        rooms: true,
+        priceSnapshots: {
+          where: { verificationState: { in: ['VERIFIED', 'PARTIALLY_VERIFIED'] } },
+          orderBy: [{ pricePerNight: 'asc' }, { fetchedAt: 'desc' }],
+          take: 1,
+          include: { room: true, ratePlan: true },
+        },
+      },
+      take: 3,
+    });
+  }
 
   const dbTime = Date.now() - dbStart;
 
-  if (!hotel) {
+  if (targetHotels.length === 0) {
     return {
       intent: 'HOTEL_INFO_RAG',
       query,
@@ -339,34 +511,53 @@ async function handleHotelInfoRagIntent(query: string, startTime: number): Promi
     };
   }
 
-  // Synthesize answer via Gemini based strictly on database facts
-  const aiSummary = await callGeminiExplanation(
-    `You are the Taj Price Intelligence Assistant.
-Answer the user's question concisely using ONLY these verified database facts:
-Property: ${hotel.canonicalName} (${hotel.city}, ${hotel.state})
-Overview: ${hotel.description}
-Rooms: ${hotel.rooms.map((r) => r.canonicalRoomName).join(', ')}
+  const facts: string[] = [];
+  let hotelContextText = '';
 
-User question: "${query}"
-Rules:
-- Be concise (2-3 sentences).
-- Never invent prices, dates, or amenities not listed.
-- Maintain a polite, hospitable tone.`
-  );
+  for (const h of targetHotels) {
+    const snap = h.priceSnapshots?.[0];
+    const rateText = snap
+      ? `Verified nightly rate from ₹${Number(snap.pricePerNight).toLocaleString('en-IN')} (${snap.room?.canonicalRoomName || 'Standard Room'}, ${snap.ratePlan?.canonicalRateName || 'Best Available Rate'})`
+      : 'Rates verified upon live date query';
+
+    facts.push(
+      `Property: ${h.canonicalName} (${h.city}, ${h.state}) · ${h.starRating ? `${h.starRating}-Star Luxury` : 'Luxury Property'}.`,
+      `Room Categories: ${h.rooms.map((r: any) => r.canonicalRoomName).join(', ') || 'Deluxe Rooms & Luxury Suites'}.`,
+      rateText
+    );
+
+    hotelContextText += `
+Property: ${h.canonicalName} (${h.city}, ${h.state})
+Rating: ${h.starRating || 5} Stars
+Overview: ${h.description || 'Iconic luxury Taj heritage hospitality.'}
+Address: ${h.address || `${h.city}, ${h.state}`}
+Rooms: ${h.rooms.map((r: any) => r.canonicalRoomName).join(', ')}
+${rateText}
+`;
+  }
+
+  // Synthesize answer via Gemini based strictly on database facts
+  const geminiPrompt = `A guest has requested your guidance with the following inquiry:
+"${query}"
+
+Verified Taj Database Information:
+${hotelContextText}
+
+Instructions for the Concierge:
+- Provide an articulate, sophisticated, and evocative response tailored specifically to the guest's question.
+- Reference the real room categories, destination highlights, and verified rates from the facts above.
+- Never fabricate numbers or prices not listed.
+- If recommending dining or experiences (e.g. sunset cruises, palace dining, Jiva spa), describe them with elegance and cultural reverence.
+- Conclude with a warm invitation to assist further.`;
+
+  const aiSummary = await callGeminiAssistant(geminiPrompt);
 
   return {
     intent: 'HOTEL_INFO_RAG',
     query,
-    observedFacts: [
-      `Property: ${hotel.canonicalName} (${hotel.city}, ${hotel.state}).`,
-      `Classification: ${hotel.starRating ? `${hotel.starRating}-Star Luxury` : 'Luxury Property'} (${hotel.brand}).`,
-      `Address: ${hotel.address || `${hotel.city}, ${hotel.state}`}.`,
-      `Overview: ${hotel.description}`,
-      `Available room types cataloged: ${hotel.rooms.map((r) => r.canonicalRoomName).join(', ')}.`,
-      `Official booking source: ${hotel.officialBookingUrl || 'Taj Official Reservation System'}`,
-    ],
+    observedFacts: facts,
     interpretation: aiSummary || undefined,
-    sources: [`Hotel Entity ID: ${hotel.id}`, ...(aiSummary ? ['Gemini Flash (Synthesis)'] : [])],
+    sources: targetHotels.map((h) => `Official Catalog: ${h.canonicalName}`),
     executionTrace: {
       intentRoutingTimeMs: routerTime,
       dbExecutionTimeMs: dbTime,
@@ -457,6 +648,7 @@ async function handleRecommendationIntent(query: string, startTime: number): Pro
   let recommendationText = `Namaste! Here are the finest verified Taj options for your upcoming stay (${windowStr}):\n\n`;
 
   const facts: string[] = [];
+  let hotelFactText = '';
 
   hotels.forEach((h, index) => {
     const snap = h.priceSnapshots[0];
@@ -469,15 +661,26 @@ async function handleRecommendationIntent(query: string, startTime: number): Pro
     recommendationText += `   • Highlights: ${(h.description || 'Iconic luxury Taj hospitality property').slice(0, 140)}…\n\n`;
 
     facts.push(`${h.canonicalName}: ${rateText}`);
+    hotelFactText += `\n- ${h.canonicalName} in ${h.city}: ${rateText}. Overview: ${h.description}`;
   });
 
   recommendationText += `💡 Concierge Advice: For coastal relaxation, Taj Exotica Goa offers expansive private grounds. For royal Rajasthani opulence, Taj Lake Palace Udaipur delivers an unmatched floating palace arrival. Every rate is verified directly against official hotel reservation records.`;
+
+  // Enhance recommendation with Gemini if available
+  const geminiSynthesis = await callGeminiAssistant(
+    `The guest asked: "${query}"
+Stay Window: ${windowStr}
+Verified Options from Database:
+${hotelFactText}
+
+Create a gracious, tailored luxury recommendation synthesizing these verified properties and rates. Cite the rates accurately as listed.`
+  );
 
   return {
     intent: 'PRICE_SEARCH',
     query,
     observedFacts: facts,
-    interpretation: recommendationText,
+    interpretation: geminiSynthesis || recommendationText,
     sources: ['Official Taj Reservation Records', 'Taj Heritage Collection'],
     executionTrace: {
       intentRoutingTimeMs: routerTime,
