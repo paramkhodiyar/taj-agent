@@ -20,13 +20,13 @@ export async function GET(
       return NextResponse.json({ success: false, error: 'Search not found' }, { status: 404 });
     }
 
-    // Load canonical active hotels with their hero assets
+    // Load canonical active hotels with their official assets
     const hotels = await prisma.hotel.findMany({
       where: { isActive: true },
       include: {
         assets: {
-          where: { type: 'hero' },
-          take: 1,
+          orderBy: { type: 'asc' }, // 'hero' comes before 'gallery'
+          take: 6,
         },
       },
       orderBy: { canonicalName: 'asc' },
@@ -70,7 +70,8 @@ export async function GET(
             city: hotel.city,
             state: hotel.state,
             starRating: hotel.starRating,
-            heroImage: hotel.assets[0]?.url ?? null,
+            heroImage: hotel.assets.find((a) => a.type === 'hero')?.url || hotel.assets[0]?.url || null,
+            images: hotel.assets.map((a) => a.url),
             officialBookingUrl: hotel.officialBookingUrl,
             hasObservation: false,
             freshness: computeFreshness(null),
@@ -106,7 +107,8 @@ export async function GET(
           city: hotel.city,
           state: hotel.state,
           starRating: hotel.starRating,
-          heroImage: hotel.assets[0]?.url ?? null,
+          heroImage: hotel.assets.find((a) => a.type === 'hero')?.url || hotel.assets[0]?.url || null,
+          images: hotel.assets.map((a) => a.url),
           officialBookingUrl: hotel.officialBookingUrl,
           hasObservation: true,
           freshness,

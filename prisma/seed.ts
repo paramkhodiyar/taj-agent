@@ -488,8 +488,13 @@ export const CANONICAL_TAJ_CATALOG: CanonicalTajProperty[] = [
     officialBookingUrl: "https://www.tajhotels.com/en-in/taj/taj-chandigarh/",
     latitude: 30.7416,
     longitude: 76.7828,
-    heroImage: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1600&q=80",
-    galleryImages: []
+    heroImage: "https://cdn.sanity.io/images/ocl5w36p/ihcl_prod/12e39a72cc77995c8ed5f01548277970fbccea96-3841x1860.jpg",
+    galleryImages: [
+      "https://cdn.sanity.io/images/ocl5w36p/ihcl_prod/42b3265e84be00c591812b596cdb07243f7936f6-1280x1760.jpg",
+      "https://cdn.sanity.io/images/ocl5w36p/ihcl_prod/dfaf9a4e96ce258ced5ee1ec843dd273b5d9b0a7-1280x1760.jpg",
+      "https://cdn.sanity.io/images/ocl5w36p/ihcl_prod/3f8d23e7003408581c87722472b04de182c549f8-3840x1320.jpg",
+      "https://cdn.sanity.io/images/ocl5w36p/ihcl_prod/01abd4ad14923af775ccd1500fce2dab5f372c40-3840x1320.jpg"
+    ]
   },
   {
     id: "taj-hotel-convention-centre-agra",

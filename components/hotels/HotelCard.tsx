@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { PriceDisplay } from '../pricing/PriceDisplay';
 import { FreshnessBadge } from '../pricing/FreshnessBadge';
@@ -12,6 +14,7 @@ interface HotelCardProps {
     state: string;
     starRating: number | null;
     heroImage: string | null;
+    images?: string[];
     officialBookingUrl?: string | null;
     freshness: any;
     cheapestOption: {
@@ -32,15 +35,36 @@ interface HotelCardProps {
 
 export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
   const opt = hotel.cheapestOption;
+  const images = hotel.images && hotel.images.length > 0
+    ? hotel.images
+    : hotel.heroImage
+    ? [hotel.heroImage]
+    : [];
+
+  const [imgIndex, setImgIndex] = useState(0);
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setImgIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setImgIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const hasBreakfast = opt?.mealPlan?.toLowerCase().includes('breakfast');
 
   return (
-    <div className="border border-taj-gray-border bg-white flex flex-col justify-between overflow-hidden group">
+    <div className="border border-taj-gray-border bg-white flex flex-col justify-between overflow-hidden group hover:border-taj-gold/60 transition-colors">
       <div>
-        {/* Imagery */}
+        {/* Imagery with Carousel if multiple images exist */}
         <div className="aspect-[16/10] bg-taj-cream relative overflow-hidden border-b border-taj-gray-border">
-          {hotel.heroImage ? (
+          {images.length > 0 ? (
             <img
-              src={hotel.heroImage}
+              src={images[imgIndex] || images[0]}
               alt={hotel.canonicalName}
               className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.015]"
             />
@@ -48,6 +72,30 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
             <div className="w-full h-full flex items-center justify-center text-xs text-taj-gray-warm">
               Taj Official Photography
             </div>
+          )}
+
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={handlePrev}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center text-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                aria-label="Previous photo"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center text-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                aria-label="Next photo"
+              >
+                ›
+              </button>
+              <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded">
+                {imgIndex + 1}/{images.length}
+              </div>
+            </>
           )}
         </div>
 
@@ -63,7 +111,7 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
               </h4>
             </div>
             {hotel.starRating && (
-              <span className="text-[11px] text-taj-gold tracking-widest">
+              <span className="text-[11px] text-taj-gold tracking-widest shrink-0">
                 {'★'.repeat(hotel.starRating)}
               </span>
             )}
@@ -72,24 +120,46 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
           <FreshnessBadge freshness={hotel.freshness} />
 
           {opt ? (
-            <div className="border-t border-taj-gray-border pt-3 space-y-2 text-xs">
-              <div className="flex items-baseline justify-between">
-                <span className="text-taj-gray-warm">Lead Room:</span>
-                <span className="font-medium text-taj-charcoal text-right truncate max-w-[160px]">
-                  {opt.room}
+            <div className="border-t border-taj-gray-border pt-3 space-y-2.5 text-xs">
+              {/* Meal Inclusions Checklist */}
+              <div className="flex items-start gap-1.5">
+                <span className={`text-[11px] font-bold mt-0.5 shrink-0 ${hasBreakfast ? 'text-emerald-700' : 'text-taj-gold'}`}>
+                  ✓
                 </span>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] text-taj-gray-warm uppercase block font-medium">
+                    Meal Inclusions
+                  </span>
+                  <span className={`font-medium block truncate ${hasBreakfast ? 'text-emerald-800' : 'text-taj-charcoal'}`}>
+                    {opt.mealPlan || 'Room Only'}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-baseline justify-between">
-                <span className="text-taj-gray-warm">Plan:</span>
-                <span className="text-taj-charcoal-muted text-right truncate max-w-[160px]">
-                  {opt.mealPlan}
-                </span>
+
+              {/* Cancellation Checklist */}
+              <div className="flex items-start gap-1.5">
+                <span className="text-emerald-700 text-[11px] font-bold mt-0.5 shrink-0">✓</span>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] text-taj-gray-warm uppercase block font-medium">
+                    Cancellation
+                  </span>
+                  <span className="text-taj-charcoal-muted block truncate">
+                    {opt.cancellationPolicy}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-baseline justify-between">
-                <span className="text-taj-gray-warm">Cancellation:</span>
-                <span className="text-taj-charcoal-muted text-right truncate max-w-[160px]">
-                  {opt.cancellationPolicy}
-                </span>
+
+              {/* Lead Room Category */}
+              <div className="flex items-start gap-1.5">
+                <span className="text-emerald-700 text-[11px] font-bold mt-0.5 shrink-0">✓</span>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] text-taj-gray-warm uppercase block font-medium">
+                    Room Category
+                  </span>
+                  <span className="font-medium text-taj-charcoal block truncate">
+                    {opt.room}
+                  </span>
+                </div>
               </div>
             </div>
           ) : (
@@ -100,8 +170,8 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
         </div>
       </div>
 
-      {/* Footer / CTA */}
-      <div className="p-5 pt-0 border-t border-taj-gray-border/60 mt-2 flex items-center justify-between">
+      {/* Footer / CTA (Robust, cleanly partitioned, zero overlap) */}
+      <div className="p-5 pt-3 border-t border-taj-gray-border/60 mt-2 flex items-center justify-between gap-3">
         <div>
           {opt ? (
             <div>
@@ -120,13 +190,13 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {hotel.officialBookingUrl && (
             <a
               href={hotel.officialBookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs uppercase tracking-wider text-taj-gold-muted hover:text-taj-burgundy font-medium px-2 py-2"
+              className="text-xs uppercase tracking-wider text-taj-gold-muted hover:text-taj-burgundy font-medium px-2 py-1.5 border border-taj-gray-border hover:border-taj-burgundy transition-colors"
               title={`Visit official reservation page for ${hotel.canonicalName}`}
             >
               Taj ↗
@@ -134,9 +204,9 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
           )}
           <Link
             href={`/hotel/${hotel.slug}?searchId=${searchId}`}
-            className="text-xs uppercase tracking-wider font-medium text-taj-burgundy hover:text-taj-burgundy-deep border border-taj-burgundy/30 px-3 py-2 hover:bg-taj-burgundy/5 transition-colors"
+            className="text-xs uppercase tracking-wider font-medium text-taj-burgundy hover:text-taj-burgundy-deep border border-taj-burgundy/40 px-3 py-1.5 hover:bg-taj-burgundy hover:text-white transition-colors"
           >
-            View details →
+            Details →
           </Link>
         </div>
       </div>
