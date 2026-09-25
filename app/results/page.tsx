@@ -195,13 +195,25 @@ function ResultsContent() {
             Querying Historical Database…
           </p>
         </div>
-      ) : data?.summary.propertiesWithVerifiedData === 0 ? (
+      ) : !data ? (
+        <div className="py-20 text-center space-y-4">
+          <p className="text-sm font-serif text-taj-charcoal-muted">
+            {error || 'No search session found or query is loading.'}
+          </p>
+          <Link
+            href="/"
+            className="inline-block px-5 py-2.5 bg-taj-burgundy text-white text-xs font-serif font-medium uppercase tracking-wider rounded-xl"
+          >
+            Start New Search →
+          </Link>
+        </div>
+      ) : data.summary?.propertiesWithVerifiedData === 0 ? (
         /* Honest Empty State per 01-PRODUCT-AND-UI.md §8.1 & Phase 4 Gate */
         <EmptySearchState
           searchId={searchId}
-          checkIn={data.search.checkIn}
-          checkOut={data.search.checkOut}
-          totalProperties={data.summary.totalPropertiesMonitored}
+          checkIn={data.search?.checkIn || ''}
+          checkOut={data.search?.checkOut || ''}
+          totalProperties={data.summary?.totalPropertiesMonitored || 31}
           onTriggerFetch={handleFetchLatest}
           isFetching={fetching}
         />
@@ -260,13 +272,13 @@ function ResultsContent() {
             </div>
 
             <div className="text-xs text-taj-gray-warm">
-              Showing {data.results.length} eligible properties
+              Showing {(data.results || []).length} eligible properties
             </div>
           </div>
 
           {/* Results Grid */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.results.map((hotel: any) => (
+            {(data.results || []).map((hotel: any) => (
               <HotelCard
                 key={hotel.hotelId}
                 hotel={hotel}
@@ -276,11 +288,11 @@ function ResultsContent() {
           </section>
 
           {/* Unverified Hotels Section */}
-          {data.unverifiedHotels.length > 0 && (
+          {(data.unverifiedHotels || []).length > 0 && (
             <section className="border border-taj-gray-border bg-white p-6 space-y-4">
               <div className="border-b border-taj-gray-border pb-3">
                 <h4 className="text-sm font-serif text-taj-burgundy font-medium">
-                  Properties Awaiting Initial Verification ({data.unverifiedHotels.length})
+                  Properties Awaiting Initial Verification ({(data.unverifiedHotels || []).length})
                 </h4>
                 <p className="text-xs text-taj-charcoal-muted mt-0.5">
                   These Taj properties have no cached observations recorded for these exact dates.

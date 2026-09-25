@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Taj2DHotel3DLoader } from '@/components/3d/Taj2DHotel3DLoader';
+import { TajLogo3DLoader } from '@/components/3d/TajLogo3DLoader';
 
 interface TajPageLoaderProps {
   title?: string;
@@ -23,15 +23,15 @@ export const TajPageLoader: React.FC<TajPageLoaderProps> = ({
 }) => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-fade-in">
-      {/* 2D Hotel Figure Assembling in 3D Motion */}
+      {/* Official Taj Logo Assembling in 3D Motion */}
       <div className="flex flex-col items-center justify-center py-2 text-center space-y-1">
-        <Taj2DHotel3DLoader
-          size={110}
+        <TajLogo3DLoader
+          size={76}
           theme="light"
           label=""
           sublabel=""
           autoReassemble={true}
-          replayIntervalMs={4500}
+          replayIntervalMs={4200}
         />
 
         <div className="space-y-1">

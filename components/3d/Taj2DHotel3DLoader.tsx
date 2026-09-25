@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 
 interface Taj2DHotel3DLoaderProps {
-  size?: number; // default 120px
+  size?: number; // Compact loader icon: default 96px
   theme?: 'light' | 'dark';
   autoReassemble?: boolean;
   replayIntervalMs?: number;
@@ -11,13 +11,11 @@ interface Taj2DHotel3DLoaderProps {
   sublabel?: string;
 }
 
-interface PieceConfig {
+interface ArchitecturalLayer {
   id: string;
   name: string;
-  // Final 2D coordinate offsets (px relative to 120x120 frame)
   targetX: number;
   targetY: number;
-  // Randomized initial 3D scatter transforms
   scatterX: number;
   scatterY: number;
   scatterZ: number;
@@ -25,42 +23,42 @@ interface PieceConfig {
   rotY: number;
   rotZ: number;
   delay: number;
-  renderSvg: (theme: 'light' | 'dark') => React.ReactNode;
+  renderSvg: (t: 'light' | 'dark') => React.ReactNode;
 }
 
 /**
- * Taj2DHotel3DLoader
+ * Taj2DHotel3DLoader — Taj Luxury Hotel 2D Figure with 3D Spatial Assembly
  * 
- * 2D Flat Architectural Asset with 3D Spatial Movement:
- * - The hotel itself is an authentic, elegant 2D figure (the iconic Taj Palace silhouette & crest).
- * - The movement occurs in 3D: each 2D architectural layer begins scattered along randomized
- *   3D vectors (displaced across X, Y, Z depth planes with 3D rotational pitch/yaw/roll).
- * - The pieces fly in through 3D perspective and seamlessly assemble into the pristine 2D Taj Palace.
- * - Once assembled, the flat 2D figure performs a gentle 3D parallax hover.
+ * Strict Design Adherence:
+ * - NOT the Agra Taj Mahal mausoleum, but a stately TAJ LUXURY HOTEL.
+ * - ZERO RED. ZERO ISLAMIC DOMES.
+ * - Classical grand hotel architecture: grand columned entrance portico, multi-story suite balconies,
+ *   classical triangular pediment, balustrade roofline, crowned by the official golden Taj rosette crest.
+ * - Color Palette: Imperial Taj Gold (#b88e2e, #d4af37, #ffd700), Warm Ivory (#fbf9f5), and Deep Charcoal.
+ * - Compact loader icon footprint (88px–100px).
+ * - 2D Flat Vector asset whose pieces fly in from randomized 3D directions and snap into a flat 2D figure.
  */
 export const Taj2DHotel3DLoader: React.FC<Taj2DHotel3DLoaderProps> = ({
-  size = 120,
+  size = 96,
   theme = 'light',
   autoReassemble = true,
   replayIntervalMs = 4500,
-  label = 'Taj Price Intelligence',
-  sublabel = 'Verifying Official Rates…',
+  label = 'Taj Hotels',
+  sublabel = 'Verifying Verified Rates…',
 }) => {
   const [phase, setPhase] = useState<'scattered' | 'assembling' | 'settled'>('scattered');
   const [cycle, setCycle] = useState(0);
 
   useEffect(() => {
-    // 1. Start assembly
+    // Quick, smooth assembly
     const startTimeout = setTimeout(() => {
       setPhase('assembling');
-    }, 60);
+    }, 50);
 
-    // 2. Lock into 2D figure
     const settleTimeout = setTimeout(() => {
       setPhase('settled');
-    }, 1200);
+    }, 1100);
 
-    // 3. Optional loop for loader experience
     let loopTimeout: NodeJS.Timeout;
     if (autoReassemble) {
       loopTimeout = setTimeout(() => {
@@ -79,238 +77,244 @@ export const Taj2DHotel3DLoader: React.FC<Taj2DHotel3DLoaderProps> = ({
   const isScattered = phase === 'scattered';
   const isSettled = phase === 'settled';
 
-  // 8 Discrete 2D Architectural Pieces that fly from 3D space:
-  const pieces: PieceConfig[] = [
-    // 1. Foundation Podium (Bottom Ground Layer)
+  // 8 Symmetrical 2D Classical Hotel Architectural Pieces
+  const layers: ArchitecturalLayer[] = [
+    // 1. Grand Hotel Plinth / Base Promenade
     {
-      id: 'foundation',
-      name: 'Podium Terrace',
-      targetX: 10,
-      targetY: 88,
+      id: 'plinth',
+      name: 'Grand Base Plinth',
+      targetX: 8,
+      targetY: 76,
       scatterX: -70,
-      scatterY: 80,
+      scatterY: 85,
       scatterZ: -120,
-      rotX: 65,
-      rotY: -35,
-      rotZ: 40,
-      delay: 0.05,
-      renderSvg: (t) => (
-        <svg width="100" height="14" viewBox="0 0 100 14" fill="none">
-          <rect x="0" y="8" width="100" height="4" rx="1" fill="#b88e2e" />
-          <rect x="4" y="3" width="92" height="4" rx="0.5" fill={t === 'dark' ? '#3d121c' : '#4a1521'} />
-          <line x1="8" y1="5" x2="92" y2="5" stroke="#b88e2e" strokeWidth="0.6" strokeDasharray="3 2" />
+      rotX: 60,
+      rotY: -40,
+      rotZ: 45,
+      delay: 0.04,
+      renderSvg: () => (
+        <svg width="80" height="10" viewBox="0 0 80 10" fill="none">
+          <rect x="0" y="6" width="80" height="3" rx="0.5" fill="#b88e2e" />
+          <rect x="4" y="2" width="72" height="3" rx="0.5" fill="#d4af37" fillOpacity="0.8" />
+          <line x1="8" y1="4" x2="72" y2="4" stroke="#ffffff" strokeWidth="0.5" strokeOpacity="0.8" />
         </svg>
       ),
     },
 
-    // 2. Center Palace Colonnade & Grand Arch
+    // 2. Central Grand Entrance Portico & Classical Columns
     {
-      id: 'center-colonnade',
-      name: 'Grand Arch Facade',
-      targetX: 42,
-      targetY: 52,
+      id: 'portico',
+      name: 'Grand Portico & Columns',
+      targetX: 33,
+      targetY: 50,
       scatterX: 0,
-      scatterY: -90,
+      scatterY: -80,
       scatterZ: 140,
-      rotX: -55,
-      rotY: 20,
-      rotZ: -25,
-      delay: 0.12,
+      rotX: -60,
+      rotY: 25,
+      rotZ: -30,
+      delay: 0.1,
       renderSvg: (t) => (
-        <svg width="36" height="38" viewBox="0 0 36 38" fill="none">
-          {/* Main Center Building */}
-          <rect x="0" y="0" width="36" height="38" rx="1" fill={t === 'dark' ? '#4a1521' : '#4a1521'} stroke="#b88e2e" strokeWidth="0.8" />
-          {/* Grand Entrance Arch Portal */}
-          <path d="M 10 38 L 10 24 C 10 18, 26 18, 26 24 L 26 38 Z" fill="#b88e2e" fillOpacity="0.3" stroke="#b88e2e" strokeWidth="0.8" />
-          {/* Upper Window Tier */}
-          <rect x="4" y="6" width="6" height="8" rx="3" fill="#ffd700" fillOpacity="0.85" />
-          <rect x="15" y="6" width="6" height="8" rx="3" fill="#ffd700" fillOpacity="0.85" />
-          <rect x="26" y="6" width="6" height="8" rx="3" fill="#ffd700" fillOpacity="0.85" />
+        <svg width="30" height="28" viewBox="0 0 30 28" fill="none">
+          {/* Main Entrance Hall */}
+          <rect x="0" y="0" width="30" height="28" rx="0.5" fill={t === 'dark' ? '#25201b' : '#ffffff'} stroke="#b88e2e" strokeWidth="0.8" />
+          {/* Grand Canopy / Architraves */}
+          <rect x="2" y="0" width="26" height="3" fill="#b88e2e" />
+          {/* Classical Hotel Columns (4 stately vertical pillars) */}
+          <line x1="5" y1="3" x2="5" y2="28" stroke="#b88e2e" strokeWidth="1.2" />
+          <line x1="11" y1="3" x2="11" y2="28" stroke="#b88e2e" strokeWidth="1.2" />
+          <line x1="19" y1="3" x2="19" y2="28" stroke="#b88e2e" strokeWidth="1.2" />
+          <line x1="25" y1="3" x2="25" y2="28" stroke="#b88e2e" strokeWidth="1.2" />
+          {/* Warm Golden Hotel Foyer Entrance Light */}
+          <rect x="8" y="14" width="14" height="14" rx="1" fill="#ffd700" fillOpacity="0.85" />
+          <line x1="15" y1="14" x2="15" y2="28" stroke="#b88e2e" strokeWidth="0.6" />
         </svg>
       ),
     },
 
-    // 3. Left Wing (Victorian Colonnade)
+    // 3. Left Guest Suites Wing (Classical Hotel Windows)
     {
       id: 'left-wing',
-      name: 'Left Palace Wing',
-      targetX: 12,
-      targetY: 58,
-      scatterX: -90,
+      name: 'Left Suites Wing',
+      targetX: 10,
+      targetY: 52,
+      scatterX: -85,
       scatterY: 20,
       scatterZ: 90,
-      rotX: 30,
+      rotX: 35,
       rotY: 60,
       rotZ: -45,
-      delay: 0.18,
+      delay: 0.16,
       renderSvg: (t) => (
-        <svg width="30" height="32" viewBox="0 0 30 32" fill="none">
-          <rect x="0" y="0" width="30" height="32" rx="1" fill={t === 'dark' ? '#330c15' : '#3d121c'} stroke="#b88e2e" strokeWidth="0.6" />
-          {/* Arched Windows */}
-          <rect x="4" y="6" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="13" y="6" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="21" y="6" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="4" y="18" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="13" y="18" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="21" y="18" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
+        <svg width="24" height="26" viewBox="0 0 24 26" fill="none">
+          <rect x="0" y="0" width="24" height="26" rx="0.5" fill={t === 'dark' ? '#1c1815' : '#fcfaf6'} stroke="#b88e2e" strokeWidth="0.6" />
+          {/* Multi-Tier Suite Windows with Golden Warm Glow */}
+          <rect x="3" y="4" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="10" y="4" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="17" y="4" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="3" y="14" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="10" y="14" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="17" y="14" width="4.5" height="6" rx="0.5" fill="#d4af37" />
         </svg>
       ),
     },
 
-    // 4. Right Wing (Victorian Colonnade)
+    // 4. Right Guest Suites Wing (Classical Hotel Windows)
     {
       id: 'right-wing',
-      name: 'Right Palace Wing',
-      targetX: 78,
-      targetY: 58,
-      scatterX: 95,
-      scatterY: 30,
-      scatterZ: -80,
+      name: 'Right Suites Wing',
+      targetX: 62,
+      targetY: 52,
+      scatterX: 85,
+      scatterY: 25,
+      scatterZ: -90,
       rotX: -40,
-      rotY: -50,
-      rotZ: 35,
-      delay: 0.22,
+      rotY: -55,
+      rotZ: 40,
+      delay: 0.2,
       renderSvg: (t) => (
-        <svg width="30" height="32" viewBox="0 0 30 32" fill="none">
-          <rect x="0" y="0" width="30" height="32" rx="1" fill={t === 'dark' ? '#330c15' : '#3d121c'} stroke="#b88e2e" strokeWidth="0.6" />
-          {/* Arched Windows */}
-          <rect x="4" y="6" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="13" y="6" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="21" y="6" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="4" y="18" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="13" y="18" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
-          <rect x="21" y="18" width="5" height="7" rx="2.5" fill="#b88e2e" fillOpacity="0.7" />
+        <svg width="24" height="26" viewBox="0 0 24 26" fill="none">
+          <rect x="0" y="0" width="24" height="26" rx="0.5" fill={t === 'dark' ? '#1c1815' : '#fcfaf6'} stroke="#b88e2e" strokeWidth="0.6" />
+          {/* Multi-Tier Suite Windows with Golden Warm Glow */}
+          <rect x="3" y="4" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="10" y="4" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="17" y="4" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="3" y="14" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="10" y="14" width="4.5" height="6" rx="0.5" fill="#d4af37" />
+          <rect x="17" y="14" width="4.5" height="6" rx="0.5" fill="#d4af37" />
         </svg>
       ),
     },
 
-    // 5. Left Victorian Turret Tower & Mini Dome
+    // 5. Upper Executive Penthouse Suite Tier
     {
-      id: 'left-turret',
-      name: 'Left Turret Dome',
-      targetX: 14,
-      targetY: 38,
-      scatterX: -80,
-      scatterY: -70,
-      scatterZ: 100,
-      rotX: 45,
-      rotY: 45,
-      rotZ: -60,
-      delay: 0.28,
-      renderSvg: () => (
-        <svg width="18" height="22" viewBox="0 0 18 22" fill="none">
-          {/* Mini Dome */}
-          <path d="M 2 16 C 2 8, 9 2, 9 2 C 9 2, 16 8, 16 16 Z" fill="#b88e2e" stroke="#96721e" strokeWidth="0.6" />
-          {/* Spire */}
-          <line x1="9" y1="2" x2="9" y2="0" stroke="#ffd700" strokeWidth="1" />
-          <circle cx="9" cy="0" r="0.8" fill="#ffd700" />
-          {/* Base Trim */}
-          <rect x="0" y="16" width="18" height="5" fill="#4a1521" stroke="#b88e2e" strokeWidth="0.5" />
+      id: 'penthouse-tier',
+      name: 'Penthouse Suites Tier',
+      targetX: 25,
+      targetY: 34,
+      scatterX: 0,
+      scatterY: -95,
+      scatterZ: -130,
+      rotX: 65,
+      rotY: 0,
+      rotZ: -20,
+      delay: 0.26,
+      renderSvg: (t) => (
+        <svg width="46" height="17" viewBox="0 0 46 17" fill="none">
+          <rect x="0" y="0" width="46" height="17" rx="0.5" fill={t === 'dark' ? '#25201b' : '#ffffff'} stroke="#b88e2e" strokeWidth="0.7" />
+          {/* Balustrade Balcony Line */}
+          <line x1="0" y1="16" x2="46" y2="16" stroke="#b88e2e" strokeWidth="1" />
+          {/* Luxury Penthouse Windows */}
+          <rect x="5" y="4" width="6" height="8" rx="1" fill="#ffd700" />
+          <rect x="15" y="4" width="6" height="8" rx="1" fill="#ffd700" />
+          <rect x="25" y="4" width="6" height="8" rx="1" fill="#ffd700" />
+          <rect x="35" y="4" width="6" height="8" rx="1" fill="#ffd700" />
         </svg>
       ),
     },
 
-    // 6. Right Victorian Turret Tower & Mini Dome
+    // 6. Classical Triangular Hotel Pediment & Cornice
     {
-      id: 'right-turret',
-      name: 'Right Turret Dome',
-      targetX: 88,
-      targetY: 38,
-      scatterX: 80,
-      scatterY: -70,
-      scatterZ: 110,
-      rotX: -45,
-      rotY: -45,
-      rotZ: 60,
+      id: 'classical-pediment',
+      name: 'Classical Hotel Pediment',
+      targetX: 28,
+      targetY: 20,
+      scatterX: -20,
+      scatterY: -110,
+      scatterZ: 120,
+      rotX: -55,
+      rotY: 30,
+      rotZ: -45,
       delay: 0.32,
       renderSvg: () => (
-        <svg width="18" height="22" viewBox="0 0 18 22" fill="none">
-          {/* Mini Dome */}
-          <path d="M 2 16 C 2 8, 9 2, 9 2 C 9 2, 16 8, 16 16 Z" fill="#b88e2e" stroke="#96721e" strokeWidth="0.6" />
-          {/* Spire */}
-          <line x1="9" y1="2" x2="9" y2="0" stroke="#ffd700" strokeWidth="1" />
-          <circle cx="9" cy="0" r="0.8" fill="#ffd700" />
-          {/* Base Trim */}
-          <rect x="0" y="16" width="18" height="5" fill="#4a1521" stroke="#b88e2e" strokeWidth="0.5" />
+        <svg width="40" height="15" viewBox="0 0 40 15" fill="none">
+          {/* Symmetrical Classical Triangular Pediment Roofline */}
+          <polygon points="20,1 38,14 2,14" fill="#b88e2e" stroke="#96721e" strokeWidth="0.8" />
+          <polygon points="20,4 34,13 6,13" fill="#d4af37" />
+          {/* Center Royal Medallion */}
+          <circle cx="20" cy="9.5" r="2.2" fill="#ffffff" stroke="#b88e2e" strokeWidth="0.5" />
         </svg>
       ),
     },
 
-    // 7. Central Iconic Grand Onion Dome
+    // 7. Left & Right Roof Balustrades
     {
-      id: 'center-dome',
-      name: 'Grand Central Dome',
-      targetX: 43,
-      targetY: 26,
-      scatterX: 0,
-      scatterY: -110,
-      scatterZ: -140,
-      rotX: 70,
-      rotY: 0,
-      rotZ: -30,
+      id: 'balustrades',
+      name: 'Roof Balustrades',
+      targetX: 8,
+      targetY: 46,
+      scatterX: -60,
+      scatterY: -60,
+      scatterZ: -80,
+      rotX: 45,
+      rotY: -45,
+      rotZ: 60,
       delay: 0.38,
       renderSvg: () => (
-        <svg width="34" height="28" viewBox="0 0 34 28" fill="none">
-          {/* Drum Base */}
-          <rect x="2" y="22" width="30" height="5" rx="0.5" fill="#b88e2e" />
-          {/* Iconic Taj Onion Dome Curve */}
-          <path
-            d="M 3 22 C 3 12, 17 2, 17 2 C 17 2, 31 12, 31 22 Z"
-            fill="#5a1827"
-            stroke="#b88e2e"
-            strokeWidth="0.8"
-          />
-          {/* Gold Rib Accent */}
-          <path d="M 17 2 C 12 12, 12 18, 12 22" stroke="#ffd700" strokeWidth="0.6" fill="none" opacity="0.8" />
-          <path d="M 17 2 C 22 12, 22 18, 22 22" stroke="#ffd700" strokeWidth="0.6" fill="none" opacity="0.8" />
-          <line x1="17" y1="2" x2="17" y2="22" stroke="#ffd700" strokeWidth="0.8" opacity="0.9" />
+        <svg width="80" height="7" viewBox="0 0 80 7" fill="none">
+          {/* Left Wing Roof Balustrade */}
+          <line x1="2" y1="6" x2="26" y2="6" stroke="#b88e2e" strokeWidth="0.8" />
+          <circle cx="2" cy="2" r="1.2" fill="#ffd700" />
+          <circle cx="26" cy="2" r="1.2" fill="#ffd700" />
+          {/* Right Wing Roof Balustrade */}
+          <line x1="54" y1="6" x2="78" y2="6" stroke="#b88e2e" strokeWidth="0.8" />
+          <circle cx="54" cy="2" r="1.2" fill="#ffd700" />
+          <circle cx="78" cy="2" r="1.2" fill="#ffd700" />
         </svg>
       ),
     },
 
-    // 8. The Official Sovereign Taj Crest Finial
+    // 8. The Official Sovereign Taj Rosette Crest (The Iconic 6-Facet Golden Mandala)
     {
       id: 'taj-crest',
-      name: 'Taj Royal Crest',
-      targetX: 52,
-      targetY: 8,
-      scatterX: 20,
-      scatterY: -130,
-      scatterZ: 180,
-      rotX: -60,
-      rotY: 80,
-      rotZ: 90,
-      delay: 0.45,
+      name: 'Official Taj Rosette Crest',
+      targetX: 40,
+      targetY: 4,
+      scatterX: 15,
+      scatterY: -125,
+      scatterZ: 160,
+      rotX: -50,
+      rotY: 70,
+      rotZ: 85,
+      delay: 0.44,
       renderSvg: () => (
-        <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
-          {/* Spire Stem */}
-          <line x1="8" y1="20" x2="8" y2="10" stroke="#ffd700" strokeWidth="1.2" />
-          {/* Golden Trefoil / Royal Rosette Crest */}
-          <circle cx="8" cy="7" r="4.5" fill="#b88e2e" stroke="#ffd700" strokeWidth="0.8" />
-          {/* Center Jewel */}
-          <circle cx="8" cy="7" r="1.5" fill="#ffffff" />
-          {/* Royal Finial Spire Point */}
-          <polygon points="8,0 6.5,5 9.5,5" fill="#ffd700" />
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="drop-shadow-[0_0_6px_rgba(255,215,0,0.6)]">
+          {/* Outer Radiant Ring */}
+          <circle cx="8" cy="8" r="7" stroke="#ffd700" strokeWidth="0.7" strokeDasharray="1.5 1" opacity="0.85" />
+          {/* Central 6-Facet Taj Floral Rosette */}
+          <circle cx="8" cy="8" r="4.5" fill="#b88e2e" stroke="#ffd700" strokeWidth="0.6" />
+          {/* 6 Radial Diamond Petals */}
+          {[0, 60, 120, 180, 240, 300].map((deg) => (
+            <polygon
+              key={deg}
+              points="8,4.5 9.2,8 8,11.5 6.8,8"
+              fill="#ffd700"
+              transform={`rotate(${deg} 8 8)`}
+              opacity="0.9"
+            />
+          ))}
+          {/* Center Core Pearl */}
+          <circle cx="8" cy="8" r="1.5" fill="#ffffff" />
         </svg>
       ),
     },
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center p-3 select-none">
+    <div className="flex flex-col items-center justify-center p-2 select-none">
       {/* 3D Perspective Stage Container */}
       <div
         className="relative flex items-center justify-center"
         style={{
           width: `${size}px`,
           height: `${size}px`,
-          perspective: '700px',
+          perspective: '650px',
         }}
       >
-        {/* Soft Gold Radiance Glow in Background */}
+        {/* Soft Radial Gold Warmth Breathing in Background */}
         <div
-          className={`absolute inset-4 rounded-full bg-taj-gold/15 blur-xl transition-all duration-1000 ${
-            isSettled ? 'scale-110 opacity-70 animate-pulse' : 'scale-75 opacity-20'
+          className={`absolute inset-2 rounded-full bg-gradient-to-r from-taj-gold/15 via-taj-gold/25 to-taj-gold/15 blur-lg transition-all duration-1000 ${
+            isSettled ? 'scale-110 opacity-75 animate-pulse' : 'scale-70 opacity-20'
           }`}
         />
 
@@ -319,43 +323,51 @@ export const Taj2DHotel3DLoader: React.FC<Taj2DHotel3DLoaderProps> = ({
           className="relative w-full h-full"
           style={{
             transformStyle: 'preserve-3d',
-            transition: 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            transition: 'transform 1.1s cubic-bezier(0.16, 1, 0.3, 1)',
             transform: isSettled
-              ? 'rotateY(-6deg) rotateX(4deg)'
-              : 'rotateY(16deg) rotateX(-8deg)',
+              ? 'rotateY(-4deg) rotateX(3deg)'
+              : 'rotateY(18deg) rotateX(-10deg)',
           }}
         >
-          {pieces.map((p) => {
+          {layers.map((layer) => {
+            const scaleRatio = size / 96;
+            const targetX = layer.targetX * scaleRatio;
+            const targetY = layer.targetY * scaleRatio;
+
             const transformStyle = isScattered
-              ? `translate3d(${p.scatterX}px, ${p.scatterY}px, ${p.scatterZ}px) rotateX(${p.rotX}deg) rotateY(${p.rotY}deg) rotateZ(${p.rotZ}deg) scale(0.6)`
-              : `translate3d(${p.targetX}px, ${p.targetY}px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1)`;
+              ? `translate3d(${layer.scatterX}px, ${layer.scatterY}px, ${layer.scatterZ}px) rotateX(${layer.rotX}deg) rotateY(${layer.rotY}deg) rotateZ(${layer.rotZ}deg) scale(0.55)`
+              : `translate3d(${targetX}px, ${targetY}px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(${scaleRatio})`;
 
             return (
               <div
-                key={p.id}
+                key={layer.id}
                 className="absolute top-0 left-0 pointer-events-none transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"
                 style={{
                   transform: transformStyle,
                   opacity: isScattered ? 0 : 1,
-                  transitionDelay: isScattered ? '0ms' : `${p.delay}s`,
-                  // Flat 2D rendering guaranteed:
+                  transitionDelay: isScattered ? '0ms' : `${layer.delay}s`,
+                  // Pure 2D Flat Vector Rendering
                   backfaceVisibility: 'visible',
-                  filter: isSettled ? 'drop-shadow(0 2px 4px rgba(36, 8, 15, 0.15))' : 'none',
+                  filter: isSettled
+                    ? theme === 'dark'
+                      ? 'drop-shadow(0 2px 5px rgba(212, 175, 55, 0.25))'
+                      : 'drop-shadow(0 2px 4px rgba(74, 21, 33, 0.12))'
+                    : 'none',
                 }}
               >
-                {p.renderSvg(theme)}
+                {layer.renderSvg(theme)}
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Luxury Labels */}
+      {/* Understated Luxury Labels */}
       {(label || sublabel) && (
         <div className="mt-2 text-center space-y-0.5">
           {label && (
             <h4
-              className={`font-serif text-xs font-semibold tracking-[0.16em] uppercase transition-all duration-500 ${
+              className={`font-serif text-[11px] font-bold tracking-[0.18em] uppercase transition-all duration-500 ${
                 theme === 'dark' ? 'text-taj-gold' : 'text-taj-burgundy'
               } ${isSettled ? 'opacity-100' : 'opacity-60'}`}
             >
