@@ -24,19 +24,19 @@ export const EmptySearchState: React.FC<EmptySearchStateProps> = ({
 
       <div className="space-y-2">
         <h3 className="text-xl sm:text-2xl font-serif text-taj-burgundy">
-          No cached price observations for these dates yet
+          No verified rates found for these dates yet
         </h3>
         <p className="text-xs text-taj-charcoal-muted max-w-md mx-auto leading-relaxed">
-          Our records currently hold no prior observations for {checkIn} to {checkOut}.
-          We never fabricate or estimate pricing.
+          Our records currently hold no prior rate checks for {checkIn} to {checkOut}.
+          We never fabricate or estimate hotel pricing.
         </p>
       </div>
 
       <div className="bg-taj-cream border border-taj-gray-border p-4 text-xs text-taj-charcoal-muted max-w-md mx-auto text-left space-y-1">
-        <p className="font-semibold text-taj-charcoal">How price verification works:</p>
-        <p>1. The agent queries official Taj booking systems directly.</p>
-        <p>2. Extracted inventory is validated and normalized.</p>
-        <p>3. Verified observations are archived to historical records.</p>
+        <p className="font-semibold text-taj-charcoal">How rate verification works:</p>
+        <p>1. We check official Taj reservation systems directly.</p>
+        <p>2. Available rooms, tariffs, and meal plans are verified.</p>
+        <p>3. Authentic rates are safely recorded for your review.</p>
       </div>
 
       <div className="pt-2">
@@ -45,7 +45,7 @@ export const EmptySearchState: React.FC<EmptySearchStateProps> = ({
           disabled={isFetching}
           className="px-8 py-3.5 bg-taj-burgundy hover:bg-taj-burgundy-deep text-white font-medium text-xs uppercase tracking-widest transition-colors disabled:opacity-50"
         >
-          {isFetching ? `Checking ${totalProperties} Taj properties across India…` : `Fetch Verified Prices Across ${totalProperties} Properties`}
+          {isFetching ? `Checking ${totalProperties} Taj properties across India…` : `Check Official Rates Across ${totalProperties} Properties`}
         </button>
       </div>
     </div>

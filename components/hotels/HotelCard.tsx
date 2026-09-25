@@ -164,7 +164,7 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
             </div>
           ) : (
             <div className="py-4 text-xs text-taj-gray-warm italic border-t border-taj-gray-border">
-              No historical price observation recorded for these dates yet.
+              No verified rates recorded for these dates yet.
             </div>
           )}
         </div>

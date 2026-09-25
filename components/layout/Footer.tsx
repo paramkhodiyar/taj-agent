@@ -11,9 +11,9 @@ export const Footer: React.FC = () => {
               Historical Integrity Principle
             </p>
             <p className="leading-relaxed">
-              Every displayed historical price is traceable to an immutable, timestamped, validated
-              source observation from official Taj booking infrastructure. The database is the source
-              of truth. The LLM is an orchestration and explanation layer — never the authority for a numeric price.
+              Every displayed rate is traceable to a timestamped, verified reservation record
+              from official Taj booking systems. Official records are our sole source of truth; conversational
+              intelligence serves strictly to assist and explain — never to fabricate or guess prices.
             </p>
           </div>
 
@@ -22,14 +22,14 @@ export const Footer: React.FC = () => {
               Observability & Verification
             </p>
             <p className="leading-relaxed">
-              Freshness is always stated explicitly in plain language. If a fetch encounters a source
-              timeout, prior verified historical observations remain intact and failures are honestly reported.
+              Freshness is always stated explicitly in plain language. If a rate inquiry encounters a temporary
+              network delay, prior verified historical rates remain intact and status is transparently reported.
             </p>
             <Link
               href="/fetch-runs"
               className="inline-block text-taj-gold-muted font-medium hover:underline pt-1"
             >
-              Inspect Agent Audit Logs →
+              View Verification Records →
             </Link>
           </div>
 

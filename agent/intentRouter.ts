@@ -97,8 +97,8 @@ async function handlePriceSearchIntent(query: string, startTime: number): Promis
       query,
       observedFacts: [
         targetCity
-          ? `No verified observations found in the database for Taj hotels in ${targetCity}.`
-          : 'No verified price observations currently exist in the database for the requested criteria.',
+          ? `No verified rates found in our records for Taj hotels in ${targetCity}. Run a quick search above to check live rates.`
+          : 'No verified rates currently exist in our records for the requested criteria. Discover live rates by running a search above.',
       ],
       sources: ['Official Taj Reservation Archive'],
       executionTrace: {
@@ -122,7 +122,7 @@ async function handlePriceSearchIntent(query: string, startTime: number): Promis
       `Rate plan: "${cheapestSnapshot.ratePlan.canonicalRateName}" (${cheapestSnapshot.mealPlan || cheapestSnapshot.ratePlan.mealPlan}).`,
       `Cancellation terms: ${cheapestSnapshot.cancellationPolicy || cheapestSnapshot.ratePlan.cancellationPolicy}.`,
       `Stay dates: ${stayDates} (${cheapestSnapshot.adults} Adults, ${cheapestSnapshot.rooms} Room).`,
-      `Last verified observation timestamp: ${cheapestSnapshot.fetchedAt.toISOString()} (Source: ${cheapestSnapshot.source}).`,
+      `Last verified: ${new Date(cheapestSnapshot.fetchedAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })} IST (Direct Taj Reservation).`,
     ],
     structuredData: {
       hotelId: cheapestSnapshot.hotelId,
@@ -135,7 +135,7 @@ async function handlePriceSearchIntent(query: string, startTime: number): Promis
       snapshotId: cheapestSnapshot.id,
       fetchRunId: cheapestSnapshot.fetchRunId,
     },
-    sources: [`Observation Record Ref: #${cheapestSnapshot.id.slice(0, 8)}`],
+    sources: [`Verified Record Ref: #${cheapestSnapshot.id.slice(0, 8)}`],
     executionTrace: {
       intentRoutingTimeMs: routerTime,
       dbExecutionTimeMs: dbTime,
@@ -205,8 +205,8 @@ async function handlePriceExplanationIntent(query: string, startTime: number): P
       intent: 'PRICE_EXPLANATION',
       query,
       observedFacts: [
-        `Found only ${snapshots.length} observation for ${matched?.canonicalName || 'the requested hotel'} in the database.`,
-        'At least two historical observations are required to calculate price changes or trends.',
+        `Found only ${snapshots.length} historical record for ${matched?.canonicalName || 'the requested hotel'}.`,
+        'At least two historical rate records are required to calculate price changes or trends.',
       ],
       sources: ['Official Taj Reservation Archive'],
       executionTrace: {
@@ -227,17 +227,17 @@ async function handlePriceExplanationIntent(query: string, startTime: number): P
   const pct = Math.round((diff / priorPrice) * 100);
 
   const facts: string[] = [
-    `Observation A (${prior.fetchedAt.toISOString()}): ₹${formatIndianCurrency(priorPrice)} / night for ${prior.room.canonicalRoomName} (${prior.ratePlan.canonicalRateName}).`,
-    `Observation B (${latest.fetchedAt.toISOString()}): ₹${formatIndianCurrency(latestPrice)} / night for ${latest.room.canonicalRoomName} (${latest.ratePlan.canonicalRateName}).`,
-    `Numeric difference computed via database values: ${diff > 0 ? '+' : ''}₹${formatIndianCurrency(diff)} (${diff > 0 ? '+' : ''}${pct}%).`,
+    `Earlier Record (${prior.fetchedAt.toISOString().split('T')[0]}): ₹${formatIndianCurrency(priorPrice)} / night for ${prior.room.canonicalRoomName} (${prior.ratePlan.canonicalRateName}).`,
+    `Recent Record (${latest.fetchedAt.toISOString().split('T')[0]}): ₹${formatIndianCurrency(latestPrice)} / night for ${latest.room.canonicalRoomName} (${latest.ratePlan.canonicalRateName}).`,
+    `Official rate difference: ${diff > 0 ? '+' : ''}₹${formatIndianCurrency(diff)} (${diff > 0 ? '+' : ''}${pct}%).`,
   ];
 
   // Explanatory interpretation (clearly segregated per 04-API-AND-SECURITY.md §4)
   let interpretation = '';
   if (latest.ratePlan.canonicalRateName !== prior.ratePlan.canonicalRateName) {
-    interpretation = `The rate plan changed between observations from "${prior.ratePlan.canonicalRateName}" to "${latest.ratePlan.canonicalRateName}" (meal inclusions: "${latest.mealPlan}"). This package modification accounts for part or all of the price difference.`;
+    interpretation = `The rate plan changed between records from "${prior.ratePlan.canonicalRateName}" to "${latest.ratePlan.canonicalRateName}" (meal inclusions: "${latest.mealPlan}"). This package modification accounts for part or all of the price difference.`;
   } else if (latest.room.canonicalRoomName !== prior.room.canonicalRoomName) {
-    interpretation = `The room category observed shifted from "${prior.room.canonicalRoomName}" to "${latest.room.canonicalRoomName}", representing an upgrade in room tier rather than a base price increase.`;
+    interpretation = `The room category shifted from "${prior.room.canonicalRoomName}" to "${latest.room.canonicalRoomName}", representing an upgrade in room tier rather than a base price increase.`;
   } else if (diff > 0) {
     interpretation = `The rate plan and room tier remained identical. The rate change reflects dynamic demand-driven yield management by Taj for these travel dates.`;
   } else {
@@ -250,8 +250,8 @@ async function handlePriceExplanationIntent(query: string, startTime: number): P
     observedFacts: facts,
     interpretation,
     sources: [
-      `Observation Ref: #${prior.id.slice(0, 8)} (${prior.fetchedAt.toISOString()})`,
-      `Observation Ref: #${latest.id.slice(0, 8)} (${latest.fetchedAt.toISOString()})`,
+      `Verified Record Ref: #${prior.id.slice(0, 8)}`,
+      `Verified Record Ref: #${latest.id.slice(0, 8)}`,
     ],
     executionTrace: {
       intentRoutingTimeMs: routerTime,
@@ -384,10 +384,10 @@ async function handleDeveloperCreditIntent(query: string, startTime: number): Pr
   const routerTime = Date.now() - startTime;
   const wittyResponse =
     'Namaste! Taj Price Intelligence was designed, engineered, and fine-tuned by Param Khodiyar.\n\n' +
-    'Architecture Notes:\n' +
-    '• Next.js 16 App Router, TypeScript, Prisma ORM, and autonomous reservation observation pipelines.\n' +
-    '• Zero fake AI prices, zero CSS shadows, and 100% verified rates straight from official booking feeds.\n' +
-    '• Lore has it Param built this entire platform because paying inflated OTA markups on heritage palace rooms personally offended his engineering soul.';
+    'Craftsmanship Notes:\n' +
+    '• Handcrafted with Next.js, TypeScript, and direct rate verification.\n' +
+    '• Zero fake AI discounts, zero blurry shadows, and 100% verified rates directly from official hotel reservations.\n' +
+    '• Lore has it Param built this entire platform because paying inflated third-party markups on heritage palace suites personally offended his standards.';
 
   return {
     intent: 'HOTEL_INFO_RAG',
@@ -395,7 +395,7 @@ async function handleDeveloperCreditIntent(query: string, startTime: number): Pr
     observedFacts: [
       'Engineered and architected by Param Khodiyar.',
       'Core Mission: Democratize verified rate transparency across Taj properties with zero shadow UI and mathematical honesty.',
-      'Infrastructure: Powered by Next.js Turbopack, Prisma, and official reservation verification.',
+      'Infrastructure: Direct reservation verification and permanent rate archives.',
     ],
     interpretation: wittyResponse,
     sources: ['Provenance: Param Khodiyar (Lead Architect)'],
@@ -471,14 +471,14 @@ async function handleRecommendationIntent(query: string, startTime: number): Pro
     facts.push(`${h.canonicalName}: ${rateText}`);
   });
 
-  recommendationText += `💡 Concierge Advice: For coastal relaxation, Taj Exotica Goa offers expansive private grounds. For royal Rajasthani opulence, Taj Lake Palace Udaipur delivers an unmatched floating palace arrival. Every rate is grounded in verified reservation data.`;
+  recommendationText += `💡 Concierge Advice: For coastal relaxation, Taj Exotica Goa offers expansive private grounds. For royal Rajasthani opulence, Taj Lake Palace Udaipur delivers an unmatched floating palace arrival. Every rate is verified directly against official hotel reservation records.`;
 
   return {
     intent: 'PRICE_SEARCH',
     query,
     observedFacts: facts,
     interpretation: recommendationText,
-    sources: ['Official Taj Reservation Database', 'Canonical Property Catalog'],
+    sources: ['Official Taj Reservation Records', 'Taj Heritage Collection'],
     executionTrace: {
       intentRoutingTimeMs: routerTime,
       dbExecutionTimeMs: dbTime,

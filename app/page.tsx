@@ -31,14 +31,14 @@ export default async function HomePage() {
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="text-center space-y-2">
               <span className="text-xs uppercase tracking-widest text-taj-gold-muted font-medium">
-                Hospitality Price Intelligence
+                Luxury Hospitality Rate Intelligence
               </span>
               <h1 className="text-3xl sm:text-5xl font-serif text-taj-burgundy font-normal tracking-tight">
                 Discover the right Taj for your dates
               </h1>
               <p className="text-xs sm:text-sm text-taj-charcoal-muted max-w-xl mx-auto leading-relaxed">
-                A private intelligence pipeline for discovering, comparing, and tracking verified Taj hotel prices.
-                Every number is traceable to official booking infrastructure.
+                A bespoke intelligence service for discovering, comparing, and tracking verified Taj hotel rates.
+                Every quote is verified directly from official Taj reservations.
               </p>
             </div>
 
@@ -67,19 +67,19 @@ export default async function HomePage() {
 
             <div className="space-y-2 border-b md:border-b-0 md:border-r border-taj-gray-border pb-6 md:pb-0 md:pr-6">
               <span className="text-[11px] uppercase tracking-wider text-taj-gold-muted font-medium block">
-                Immutable Observation History
+                Verified Rate Archives
               </span>
               <p className="text-3xl font-serif text-taj-burgundy font-medium">
-                {totalSnapshots.toLocaleString('en-IN')} Snapshots
+                {totalSnapshots.toLocaleString('en-IN')} Verified Records
               </p>
               <p className="text-xs text-taj-charcoal-muted leading-relaxed">
-                Append-only historical database. Past observations are never overwritten, allowing genuine 30-day low/high tracking.
+                Permanent historical rate records. Preserved without modification to provide genuine 30-day rate trends and authentic price histories.
               </p>
             </div>
 
             <div className="space-y-2">
               <span className="text-[11px] uppercase tracking-wider text-taj-gold-muted font-medium block">
-                Latest Verified Ingestion
+                Most Recent Rate Check
               </span>
               {latestSnapshot ? (
                 <div>
@@ -93,12 +93,12 @@ export default async function HomePage() {
                     href="/fetch-runs"
                     className="inline-block text-[11px] text-taj-burgundy hover:underline mt-2 font-medium"
                   >
-                    View audit log →
+                    View verification log →
                   </Link>
                 </div>
               ) : (
                 <p className="text-xs text-taj-gray-warm italic">
-                  Awaiting initial scheduled fetch run
+                  Awaiting initial rate verification
                 </p>
               )}
             </div>

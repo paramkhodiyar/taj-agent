@@ -161,7 +161,7 @@ export const SearchForm: React.FC = () => {
             disabled={loading}
             className="h-[62px] w-full rounded-xl bg-taj-burgundy hover:bg-taj-burgundy-deep text-white font-serif font-semibold text-xs tracking-[0.15em] uppercase border border-taj-burgundy transition-all active:scale-[0.98] flex items-center justify-center p-3 cursor-pointer disabled:opacity-50"
           >
-            {loading ? 'Initiating…' : 'Discover Rates →'}
+            {loading ? 'Checking Rates…' : 'Discover Rates →'}
           </button>
         </div>
 
@@ -192,7 +192,7 @@ export const SearchForm: React.FC = () => {
           ))}
         </div>
         <span className="text-[11px] italic text-taj-charcoal-muted hidden sm:inline">
-          Official Taj booking infrastructure query
+          Verified direct hotel reservation rates
         </span>
       </div>
     </div>

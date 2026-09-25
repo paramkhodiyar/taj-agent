@@ -26,14 +26,14 @@ export const AgentLivePipeline: React.FC<AgentLivePipelineProps> = ({
 
       <div className="space-y-2">
         <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-taj-gold-muted block">
-          Agentic AI Verification Pipeline Active
+          Official Rate Verification Active
         </span>
         <h3 className="text-2xl sm:text-3xl font-serif text-taj-burgundy font-medium">
-          Extracting Official Taj Booking Data
+          Retrieving Official Taj Rates
         </h3>
         {checkIn && checkOut && (
           <p className="text-xs text-taj-charcoal-muted font-medium">
-            Stay Window: {checkIn} → {checkOut} · Live Query Across 31 Taj Properties
+            Stay Window: {checkIn} → {checkOut} · Live Inquiry Across 31 Iconic Taj Properties
           </p>
         )}
       </div>
@@ -43,27 +43,27 @@ export const AgentLivePipeline: React.FC<AgentLivePipelineProps> = ({
         <div className="flex items-center gap-3">
           <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
           <p className="text-xs font-medium text-taj-charcoal">
-            {statusText || 'Querying official Taj reservation infrastructure & running multi-stage validation…'}
+            {statusText || 'Consulting official Taj reservation systems and verifying availability…'}
           </p>
         </div>
 
-        {/* Pipeline checkpoints */}
+        {/* Verification checkpoints */}
         <div className="space-y-1.5 pt-2 border-t border-taj-gray-border/60 text-[11px] text-taj-charcoal-muted">
           <div className="flex items-center gap-2 text-emerald-800">
             <span>✓</span>
-            <span>Target properties identified from canonical Taj catalog</span>
+            <span>Target properties identified across palaces, resorts, and city landmarks</span>
           </div>
           <div className="flex items-center gap-2 text-emerald-800">
             <span>✓</span>
-            <span>Agentic AI extractor analyzing live room tiers & nightly tariffs</span>
+            <span>Reviewing live room categories & nightly tariffs</span>
           </div>
           <div className="flex items-center gap-2 text-taj-gold-muted font-medium">
             <span className="text-xs text-taj-gold font-bold">●</span>
-            <span>Validating meal plans, cancellation policies, and anomaly drop thresholds</span>
+            <span>Confirming breakfast inclusions, cancellation flexibility, and member privileges</span>
           </div>
           <div className="flex items-center gap-2 text-taj-gray-warm">
             <span>○</span>
-            <span>Archiving verified observations to immutable historical records</span>
+            <span>Preserving verified rates to your private history</span>
           </div>
         </div>
       </div>

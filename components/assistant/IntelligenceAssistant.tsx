@@ -47,13 +47,13 @@ export const IntelligenceAssistant: React.FC = () => {
     <div className="border border-taj-gray-border bg-white p-6 sm:p-8 space-y-6 max-w-4xl mx-auto">
       <div className="border-b border-taj-gray-border pb-4 space-y-1">
         <span className="text-[11px] uppercase tracking-widest text-taj-gold-muted font-medium block">
-          Taj Price Intelligence Concierge
+          Taj Luxury Concierge
         </span>
         <h3 className="text-xl sm:text-2xl font-serif text-taj-burgundy">
-          Hospitality Intelligence Assistant
+          Taj Rate & Stay Concierge
         </h3>
         <p className="text-xs text-taj-charcoal-muted">
-          Ask questions in plain English. Inquiries are verified directly against official Taj historical reservation data.
+          Ask questions in plain language. Rates and stay options are verified directly against official Taj reservation records.
         </p>
       </div>
 
@@ -64,7 +64,7 @@ export const IntelligenceAssistant: React.FC = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
-          placeholder="e.g. Which Taj is cheapest for my dates? Or: Why did Taj Lake Palace change?"
+          placeholder="e.g. Which Taj is best for next weekend? Or: Does Fort Aguada rate include breakfast?"
           className="flex-1 border border-taj-gray-border px-4 py-2.5 text-xs bg-taj-cream text-taj-charcoal focus:outline-none focus:border-taj-burgundy"
         />
         <button
@@ -103,7 +103,7 @@ export const IntelligenceAssistant: React.FC = () => {
               <span className="px-2 py-0.5 bg-taj-burgundy text-white font-mono text-[10px] uppercase">
                 {response.intent.replace(/_/g, ' ')}
               </span>
-              <span className="font-semibold text-taj-charcoal">Verified Record Response</span>
+              <span className="font-semibold text-taj-charcoal">Verified Response</span>
             </div>
 
             <span className="text-[11px] text-emerald-800 font-medium">
@@ -143,7 +143,7 @@ export const IntelligenceAssistant: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <span>Verified in {response.executionTrace.dbExecutionTimeMs}ms</span>
+              <span>Retrieved in {response.executionTrace.dbExecutionTimeMs}ms</span>
             </div>
           </div>
         </div>

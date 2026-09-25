@@ -34,7 +34,7 @@ export const MobileAssistantSheet: React.FC<MobileAssistantSheetProps> = ({
     {
       role: 'assistant',
       content:
-        'Namaste. I am your Taj Price Intelligence Concierge. Ask me about rate seasonality, breakfast inclusions, or the best verified deals across India.',
+        'Namaste. I am your Taj Luxury Concierge. Ask me about rate seasonality, breakfast inclusions, or the best verified deals across India.',
       sourceConfidence: 'VERIFIED_DATABASE',
     },
   ]);
@@ -101,7 +101,7 @@ export const MobileAssistantSheet: React.FC<MobileAssistantSheetProps> = ({
             role: 'assistant',
             content:
               data.error ||
-              'Our database records are updated regularly. For immediate rate reservations, please check the search tab.',
+              'Our rate archives are refreshed regularly. For immediate reservations, please check the search tab.',
           },
         ]);
       }
@@ -110,7 +110,7 @@ export const MobileAssistantSheet: React.FC<MobileAssistantSheetProps> = ({
         ...prev,
         {
           role: 'assistant',
-          content: 'Unable to reach the intelligence engine. Please check your connection.',
+          content: 'Unable to reach the concierge. Please check your connection.',
         },
       ]);
     } finally {
@@ -142,7 +142,7 @@ export const MobileAssistantSheet: React.FC<MobileAssistantSheetProps> = ({
             <div>
               <div className="flex items-center gap-1.5">
                 <h3 className="font-serif font-semibold text-sm text-taj-burgundy">
-                  Taj Intelligence Concierge
+                  Taj Luxury Concierge
                 </h3>
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                   LIVE
@@ -150,7 +150,7 @@ export const MobileAssistantSheet: React.FC<MobileAssistantSheetProps> = ({
               </div>
               <p className="text-[10px] text-taj-charcoal-light flex items-center gap-1">
                 <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                Verified Database Authority
+                Verified Official Rates
               </p>
             </div>
           </div>

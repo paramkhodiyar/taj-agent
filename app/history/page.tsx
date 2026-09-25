@@ -136,7 +136,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
             <p className="text-sm font-serif text-taj-burgundy">
               {searchQuery
                 ? `No past searches match "${searchQuery}".`
-                : 'No saved searches recorded in the database yet.'}
+                : 'No saved searches recorded in your history yet.'}
             </p>
             {searchQuery ? (
               <Link

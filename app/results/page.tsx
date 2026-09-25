@@ -191,8 +191,8 @@ function ResultsContent() {
 
       {loading ? (
         <TajPageLoader
-          title="Querying Price Intelligence"
-          subtitle="Accessing verified observation logs and historical property rates…"
+          title="Finding Verified Taj Rates"
+          subtitle="Checking official rates and real-time availability across properties…"
           type="results"
         />
       ) : !data ? (

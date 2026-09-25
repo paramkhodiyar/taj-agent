@@ -10,7 +10,7 @@ export default function Loading() {
       <main className="flex-1 flex items-center justify-center">
         <TajPageLoader
           title="Connecting to Taj Price Intelligence"
-          subtitle="Verifying official observations and real-time database health…"
+          subtitle="Verifying official rates and current availability…"
           type="default"
         />
       </main>

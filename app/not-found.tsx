@@ -21,13 +21,13 @@ export default function NotFound() {
 
         {/* 404 Title */}
         <span className="text-xs font-semibold uppercase tracking-[0.25em] text-taj-gold-muted block mb-2">
-          Observation Registry — Error 404
+          Taj Concierge — Page Not Found
         </span>
         <h1 className="font-serif text-3xl sm:text-4xl font-bold text-taj-burgundy mb-4">
           Destination Not Found
         </h1>
         <p className="text-xs sm:text-sm text-taj-charcoal-muted max-w-md mx-auto leading-relaxed mb-8">
-          The property, observation record, or rate search you are seeking is not present in our database. It may have expired or been relocated.
+          The property, rate search, or page you are seeking could not be found in our records. It may have expired or been relocated.
         </p>
 
         {/* Action Buttons */}

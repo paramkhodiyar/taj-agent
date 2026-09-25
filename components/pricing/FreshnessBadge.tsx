@@ -31,7 +31,7 @@ export const FreshnessBadge: React.FC<FreshnessBadgeProps> = ({
   return (
     <Link
       href="/transparency"
-      title="How we verify Taj prices (tap to view pipeline)"
+      title="How we verify Taj prices (tap to view transparency guide)"
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs border transition-colors cursor-pointer ${categoryStyles[freshness.category]} ${className}`}
     >
       <span className={`w-1.5 h-1.5 rounded-full ${dotColors[freshness.category]}`} />

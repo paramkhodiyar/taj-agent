@@ -43,7 +43,7 @@ export default async function AdminDataHealthPage() {
 
   // Determine System Status per 06-DEPLOYMENT-AND-OPERATIONS.md §5
   let systemStatus: 'HEALTHY' | 'DEGRADED' | 'INCIDENT' = 'HEALTHY';
-  let statusReason = 'All data acquisition pipelines operating normally with high verification fidelity.';
+  let statusReason = 'All rate verification systems operating normally with high fidelity.';
 
   if (failureRate > 25) {
     systemStatus = 'INCIDENT';
@@ -71,7 +71,7 @@ export default async function AdminDataHealthPage() {
               Operator Operations & Infrastructure Health
             </span>
             <h1 className="text-3xl font-serif text-taj-burgundy">
-              Data Pipeline & System Health
+              Rate Verification & System Health
             </h1>
             <p className="text-xs text-taj-charcoal-muted">
               Live observability signals and runbook links. Zero raw log inspection needed for ordinary health checks.
@@ -194,12 +194,12 @@ export default async function AdminDataHealthPage() {
         {/* Recent Error Log */}
         <div className="space-y-4">
           <h3 className="text-lg font-serif text-taj-burgundy">
-            Recent Pipeline Errors ({recentErrors.length})
+            Recent Verification Exceptions ({recentErrors.length})
           </h3>
 
           {recentErrors.length === 0 ? (
             <div className="border border-taj-gray-border bg-white p-8 text-center text-xs text-emerald-800">
-              Zero errors recorded. All agent pipelines running clean.
+              Zero exceptions recorded. All verification systems running clean.
             </div>
           ) : (
             <div className="border border-taj-gray-border bg-white divide-y divide-taj-gray-border text-xs">

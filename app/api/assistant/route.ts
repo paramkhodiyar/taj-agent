@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const message =
       response.interpretation ||
       response.observedFacts.join('\n\n') ||
-      'I have reviewed our verified database for your request.';
+      'I have reviewed our verified hotel records for your request.';
 
     return NextResponse.json({
       success: true,

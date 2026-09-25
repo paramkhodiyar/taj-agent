@@ -18,8 +18,8 @@ export default function TransparencyPage() {
           </h1>
           <p className="text-xs sm:text-sm text-taj-charcoal-muted leading-relaxed">
             Taj Price Intelligence was designed from the ground up on one inviolable principle:{' '}
-            <strong className="text-taj-charcoal">We never fabricate, estimate, or hallucinate a price.</strong>{' '}
-            Here is the transparent step-by-step pipeline behind every number on this screen.
+            <strong className="text-taj-charcoal">We never fabricate, estimate, or guess hotel pricing.</strong>{' '}
+            Here is the transparent step-by-step verification process behind every number on this screen.
           </p>
         </div>
 
@@ -31,13 +31,13 @@ export default function TransparencyPage() {
                 1
               </span>
               <h2 className="text-base font-serif text-taj-burgundy font-medium">
-                Step 1: Direct Acquisition from Official Booking Flow
+                Step 1: Direct Inquiries from Official Booking Channels
               </h2>
             </div>
             <p className="text-xs text-taj-charcoal-muted leading-relaxed pl-9">
-              When a price verification runs, our Booking Fetcher opens permitted official Taj booking
-              channels for specific travel dates and occupancy. We obtain raw, unmodified room and rate
-              records directly from the source.
+              When a rate inquiry is requested, our system consults official Taj reservation
+              channels for specific travel dates and guest occupancy. We obtain authentic, unmodified room and rate
+              records directly from the hotel source.
             </p>
           </div>
 
@@ -47,13 +47,13 @@ export default function TransparencyPage() {
                 2
               </span>
               <h2 className="text-base font-serif text-taj-burgundy font-medium">
-                Step 2: Deterministic Normalization & Label Preservation
+                Step 2: Uniform Classification & Label Preservation
               </h2>
             </div>
             <p className="text-xs text-taj-charcoal-muted leading-relaxed pl-9">
-              Raw rate names and room descriptions are normalized into canonical categories (e.g. &quot;Deluxe Room&quot;)
-              while <em>strictly retaining the original source label</em> so that any mapping can be audited.
-              Meal plans and cancellation terms are extracted as first-class structured attributes.
+              Room categories and rate plans are categorized into standard classifications (e.g. &quot;Deluxe Room&quot;)
+              while <em>strictly preserving original hotel rate labels</em> so every quote remains verifiable.
+              Meal plans, breakfast inclusions, and cancellation terms are documented explicitly.
             </p>
           </div>
 
@@ -63,13 +63,13 @@ export default function TransparencyPage() {
                 3
               </span>
               <h2 className="text-base font-serif text-taj-burgundy font-medium">
-                Step 3: Multi-Stage Validation & Anomaly Detection
+                Step 3: Multi-Stage Rate & Tax Reconciliation
               </h2>
             </div>
             <p className="text-xs text-taj-charcoal-muted leading-relaxed pl-9">
-              Before any record touches the database, our Validation Engine verifies date order, occupancy
-              matches, INR currency formatting, and checks that base rate plus taxes equals total price.
-              Unrealistic price swings (&gt;70% drops) are flagged as ANOMALOUS for verification, never
+              Before any record is entered into the official archive, our Verification Suite checks date consistency, occupancy
+              rules, INR currency formatting, and confirms that room tariffs plus taxes reconcile accurately.
+              Unrealistic price swings (&gt;70% drops) are flagged for human review, never
               silently treated as verified drops.
             </p>
           </div>
@@ -80,13 +80,13 @@ export default function TransparencyPage() {
                 4
               </span>
               <h2 className="text-base font-serif text-taj-burgundy font-medium">
-                Step 4: Immutable Append-Only Archival
+                Step 4: Permanent Historical Archival
               </h2>
             </div>
             <p className="text-xs text-taj-charcoal-muted leading-relaxed pl-9">
-              Every verified observation is saved as a permanent record. System-level audit triggers
-              strictly prohibit overwriting or deleting historical price observations. Historical observations
-              are preserved forever with complete fidelity.
+              Every verified observation is saved as a permanent record. Strict system safeguards
+              prohibit overwriting or modifying historical price records, preserving genuine 30-day rate trends
+              with complete fidelity.
             </p>
           </div>
 
@@ -96,7 +96,7 @@ export default function TransparencyPage() {
                 5
               </span>
               <h2 className="text-base font-serif text-taj-burgundy font-medium">
-                Step 5: Observable Freshness & Audit Logs
+                Step 5: Transparent Freshness & Observation Records
               </h2>
             </div>
             <p className="text-xs text-taj-charcoal-muted leading-relaxed pl-9">
@@ -109,7 +109,7 @@ export default function TransparencyPage() {
                 href="/fetch-runs"
                 className="inline-block text-xs uppercase tracking-wider text-taj-burgundy font-medium hover:underline"
               >
-                Inspect Live Agent Activity & Audit Records →
+                View Rate Verification Records →
               </Link>
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function TransparencyPage() {
           <div className="border border-taj-gold/50 bg-taj-cream p-6 space-y-2 rounded-xl">
             <div className="flex items-center gap-2">
               <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-taj-gold-muted block">
-                Engineering Provenance &amp; Developer Notes
+                Craftsmanship &amp; Creator Notes
               </span>
             </div>
             <p className="text-xs text-taj-charcoal leading-relaxed">
