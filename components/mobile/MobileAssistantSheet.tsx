@@ -82,12 +82,14 @@ export const MobileAssistantSheet: React.FC<MobileAssistantSheetProps> = ({
       });
 
       const data = await res.json();
-      if (data.success && data.message) {
+      const messageContent = data.message || data.data?.message;
+
+      if (data.success && messageContent) {
         setMessages((prev) => [
           ...prev,
           {
             role: 'assistant',
-            content: data.message,
+            content: messageContent,
             sourceConfidence: data.sourceConfidence || 'VERIFIED_DATABASE',
             citedHotels: data.citedHotels,
           },
@@ -122,19 +124,20 @@ export const MobileAssistantSheet: React.FC<MobileAssistantSheetProps> = ({
     <div className="fixed inset-0 z-50 flex flex-col justify-end md:hidden">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/50 transition-opacity"
         onClick={onClose}
       />
 
-      {/* Slide-up Bottom Sheet */}
+      {/* Slide-up Bottom Sheet - Zero Shadows */}
       <div
-        className="relative z-10 w-full max-h-[85vh] bg-taj-cream flex flex-col rounded-t-3xl shadow-[0_-12px_40px_rgba(0,0,0,0.2)] border-t border-taj-gold/30 animate-fade-in"
+        className="relative z-10 w-full max-h-[85vh] bg-taj-cream flex flex-col rounded-t-3xl border-t-2 border-taj-gold/40 animate-fade-in"
       >
         {/* Pull Handle & Header */}
         <div className="px-5 pt-3 pb-3 border-b border-taj-gray-border/80 flex items-center justify-between bg-white rounded-t-3xl">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-taj-burgundy text-white flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-taj-gold" />
+            {/* Authentic Taj Concierge Crest Badge */}
+            <div className="w-8 h-8 rounded-full bg-taj-cream border border-taj-gold/60 flex items-center justify-center p-1.5 flex-shrink-0">
+              <img src="/taj-logo.svg" alt="Taj Concierge" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">

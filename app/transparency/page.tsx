@@ -113,6 +113,18 @@ export default function TransparencyPage() {
               </Link>
             </div>
           </div>
+
+          {/* Developer Provenance */}
+          <div className="border border-taj-gold/50 bg-taj-cream p-6 space-y-2 rounded-xl">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-taj-gold-muted block">
+                Engineering Provenance &amp; Developer Notes
+              </span>
+            </div>
+            <p className="text-xs text-taj-charcoal leading-relaxed">
+              Designed &amp; engineered by <strong className="text-taj-burgundy font-semibold">Param Khodiyar</strong>. Built under the sacred oath that no traveler shall be subjected to fake AI discounts, manufactured scarcity countdowns, or inflated third-party OTA commissions when reserving India&apos;s greatest royal heritage hotels.
+            </p>
+          </div>
         </div>
       </main>
 

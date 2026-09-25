@@ -110,17 +110,16 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           >
             <div className="relative">
               <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200 ${
+                className={`w-7 h-7 rounded-full flex items-center justify-center p-1 border transition-colors duration-200 ${
                   assistantActive
-                    ? 'bg-taj-burgundy text-white'
-                    : 'bg-taj-cream-warm text-taj-burgundy'
+                    ? 'bg-taj-cream border-taj-gold'
+                    : 'bg-white border-taj-gray-border'
                 }`}
               >
-                <Sparkles className="w-4 h-4 stroke-[2]" />
+                <img src="/taj-logo.svg" alt="Concierge" className="w-full h-full object-contain" />
               </div>
               <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
               </span>
             </div>
             <span

@@ -228,6 +228,12 @@ export default async function AdminDataHealthPage() {
             </div>
           )}
         </div>
+
+        {/* System Operator & Developer Credit */}
+        <div className="border border-taj-gray-border bg-taj-cream p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between text-[11px] text-taj-charcoal-muted gap-2">
+          <span>Engineered &amp; Operated by <strong className="text-taj-burgundy font-semibold">Param Khodiyar</strong></span>
+          <span className="italic">Ensuring not a single rupee spent on royal luxury escapes mathematical scrutiny.</span>
+        </div>
       </main>
 
       <Footer />

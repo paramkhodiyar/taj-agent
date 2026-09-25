@@ -50,9 +50,14 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="border-t border-taj-gray-border pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-taj-gray-warm">
-          <p>© {new Date().getFullYear()} Taj Price Intelligence. Private Family Intelligence Application.</p>
-          <p>Restrained design system · Zero shadows · Verified provenance</p>
+        <div className="border-t border-taj-gray-border pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-taj-gray-warm gap-2 text-center sm:text-left">
+          <div>
+            <p>© {new Date().getFullYear()} Taj Price Intelligence. Private Family Intelligence Application.</p>
+            <p className="text-[10px] text-taj-charcoal-muted mt-0.5">
+              Engineered with stubborn precision by <strong className="text-taj-burgundy font-semibold">Param Khodiyar</strong> — who apparently refuses to let anyone overpay for a royal suite.
+            </p>
+          </div>
+          <p className="text-[10px] text-taj-gold-muted font-medium">Restrained luxury · Zero shadows · 100% Verified provenance</p>
         </div>
       </div>
     </footer>

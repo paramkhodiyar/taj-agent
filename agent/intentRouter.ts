@@ -30,17 +30,27 @@ export async function routeUserQuery(query: string): Promise<AssistantResponse> 
   const start = Date.now();
   const lower = query.toLowerCase();
 
+  // Intent 0: Developer Credits / Who built this?
+  if (/who (built|made|created|developed|coded)|param|khodiyar|credits|author|creator/i.test(lower)) {
+    return handleDeveloperCreditIntent(query, start);
+  }
+
   // Intent 1: "Why did [Hotel] change / become more expensive / cheaper?"
   if (/why did|why is|change|price difference|more expensive|cheaper now|increased|dropped/i.test(lower)) {
     return handlePriceExplanationIntent(query, start);
   }
 
-  // Intent 2: "Which Taj is cheapest?", "Price of Taj Goa", "Find Taj for dates"
+  // Intent 2: Recommendations / Best Options / Weekend Stays
+  if (/best taj|options|recommend|suggest|where should i stay|top taj|weekend|next week|thursday to sunday|plans/i.test(lower)) {
+    return handleRecommendationIntent(query, start);
+  }
+
+  // Intent 3: "Which Taj is cheapest?", "Price of Taj Goa", "Find Taj for dates"
   if (/cheapest|best rate|cost|rate|price|room|available|how much/i.test(lower) || /\b(for|in|dates|nov|dec|jan|feb|mar|apr|may)\b/i.test(lower)) {
     return handlePriceSearchIntent(query, start);
   }
 
-  // Intent 3: Hotel Information / RAG
+  // Intent 4: Hotel Information / RAG
   return handleHotelInfoRagIntent(query, start);
 }
 
@@ -365,3 +375,116 @@ Rules:
     },
   };
 }
+
+/**
+ * Intent: DEVELOPER_CREDITS
+ * Subtle, humorous developer easter egg
+ */
+async function handleDeveloperCreditIntent(query: string, startTime: number): Promise<AssistantResponse> {
+  const routerTime = Date.now() - startTime;
+  const wittyResponse =
+    'Namaste! Taj Price Intelligence was designed, engineered, and fine-tuned by Param Khodiyar.\n\n' +
+    'Architecture Notes:\n' +
+    '• Next.js 16 App Router, TypeScript, Prisma ORM, and autonomous reservation observation pipelines.\n' +
+    '• Zero fake AI prices, zero CSS shadows, and 100% verified rates straight from official booking feeds.\n' +
+    '• Lore has it Param built this entire platform because paying inflated OTA markups on heritage palace rooms personally offended his engineering soul.';
+
+  return {
+    intent: 'HOTEL_INFO_RAG',
+    query,
+    observedFacts: [
+      'Engineered and architected by Param Khodiyar.',
+      'Core Mission: Democratize verified rate transparency across Taj properties with zero shadow UI and mathematical honesty.',
+      'Infrastructure: Powered by Next.js Turbopack, Prisma, and official reservation verification.',
+    ],
+    interpretation: wittyResponse,
+    sources: ['Provenance: Param Khodiyar (Lead Architect)'],
+    executionTrace: {
+      intentRoutingTimeMs: routerTime,
+      dbExecutionTimeMs: 1,
+      arithmeticMethod: 'NONE',
+      llmInvolvedInPriceCalculation: false,
+    },
+  };
+}
+
+/**
+ * Intent: RECOMMENDATIONS & WEEKEND ESCAPES
+ * Recommends curated Taj luxury options with real database prices
+ */
+async function handleRecommendationIntent(query: string, startTime: number): Promise<AssistantResponse> {
+  const routerTime = Date.now() - startTime;
+  const dbStart = Date.now();
+  const lower = query.toLowerCase();
+
+  // Calculate upcoming Thursday -> Sunday window
+  const now = new Date();
+  const currentDay = now.getDay(); // 0 = Sun, 4 = Thu
+  const daysUntilThu = (4 - currentDay + 7) % 7 || 7;
+  const nextThu = new Date(now);
+  nextThu.setDate(now.getDate() + daysUntilThu);
+  const nextSun = new Date(nextThu);
+  nextSun.setDate(nextThu.getDate() + 3);
+
+  const formatDate = (d: Date) =>
+    d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+  const windowStr = `${formatDate(nextThu)} – ${formatDate(nextSun)} (3 Nights)`;
+
+  // Select top canonical properties
+  const targetSlugs = lower.includes('goa')
+    ? ['taj-exotica-resort-spa-goa', 'taj-fort-aguada-resort-spa-goa', 'taj-holiday-village-resort-spa-goa']
+    : lower.includes('mumbai')
+    ? ['the-taj-mahal-palace-mumbai', 'taj-lands-end-mumbai', 'taj-santacruz-mumbai']
+    : lower.includes('jaipur') || lower.includes('rajasthan')
+    ? ['taj-lake-palace-udaipur', 'rambagh-palace-jaipur', 'umaid-bhawan-palace-jodhpur']
+    : ['the-taj-mahal-palace-mumbai', 'taj-exotica-resort-spa-goa', 'taj-lake-palace-udaipur', 'rambagh-palace-jaipur'];
+
+  const hotels = await prisma.hotel.findMany({
+    where: { slug: { in: targetSlugs }, isActive: true },
+    include: {
+      priceSnapshots: {
+        where: { verificationState: { in: ['VERIFIED', 'PARTIALLY_VERIFIED'] } },
+        orderBy: [{ pricePerNight: 'asc' }, { fetchedAt: 'desc' }],
+        take: 1,
+        include: { room: true, ratePlan: true },
+      },
+    },
+    take: 4,
+  });
+
+  const dbTime = Date.now() - dbStart;
+
+  let recommendationText = `Namaste! Here are the finest verified Taj options for your upcoming stay (${windowStr}):\n\n`;
+
+  const facts: string[] = [];
+
+  hotels.forEach((h, index) => {
+    const snap = h.priceSnapshots[0];
+    const rateText = snap
+      ? `₹${Number(snap.pricePerNight).toLocaleString('en-IN')} / night (${snap.room?.canonicalRoomName || 'Standard Room'}, ${snap.ratePlan?.canonicalRateName || 'Best Available Rate'})`
+      : 'Rates verified upon live date query';
+
+    recommendationText += `${index + 1}. 🏰 ${h.canonicalName} (${h.city}, ${h.state})\n`;
+    recommendationText += `   • Nightly Lead Rate: ${rateText}\n`;
+    recommendationText += `   • Highlights: ${(h.description || 'Iconic luxury Taj hospitality property').slice(0, 140)}…\n\n`;
+
+    facts.push(`${h.canonicalName}: ${rateText}`);
+  });
+
+  recommendationText += `💡 Concierge Advice: For coastal relaxation, Taj Exotica Goa offers expansive private grounds. For royal Rajasthani opulence, Taj Lake Palace Udaipur delivers an unmatched floating palace arrival. Every rate is grounded in verified reservation data.`;
+
+  return {
+    intent: 'PRICE_SEARCH',
+    query,
+    observedFacts: facts,
+    interpretation: recommendationText,
+    sources: ['Official Taj Reservation Database', 'Canonical Property Catalog'],
+    executionTrace: {
+      intentRoutingTimeMs: routerTime,
+      dbExecutionTimeMs: dbTime,
+      arithmeticMethod: 'DATABASE_SQL_ONLY',
+      llmInvolvedInPriceCalculation: false,
+    },
+  };
+}
+

@@ -65,6 +65,17 @@ export const MobileHotelCard: React.FC<MobileHotelCardProps> = ({
     setPhotoIndex((prev) => (prev === validImages.length - 1 ? 0 : prev + 1));
   };
 
+  // Safe price formatter to guarantee zero runtime crashes
+  const formatPrice = (val: any): string | null => {
+    if (val === null || val === undefined) return null;
+    const num = typeof val === 'number' ? val : Number(val);
+    if (isNaN(num) || num <= 0) return null;
+    return `₹${num.toLocaleString('en-IN')}`;
+  };
+
+  const formattedLowest = formatPrice(lowestPrice);
+  const formattedTotal = formatPrice(totalPrice);
+
   // Derive breakfast and cancellation status from rate plan if not explicitly flagged
   const hasBreakfast =
     isBreakfastIncluded ||
@@ -238,11 +249,9 @@ export const MobileHotelCard: React.FC<MobileHotelCardProps> = ({
               </span>
               <div className="flex items-baseline gap-1">
                 <span className="font-serif text-xl font-bold text-taj-burgundy tabular-nums">
-                  {typeof lowestPrice === 'number' && !isNaN(lowestPrice)
-                    ? `₹${lowestPrice.toLocaleString('en-IN')}`
-                    : 'Check Rates'}
+                  {formattedLowest || 'Check Rates'}
                 </span>
-                {typeof lowestPrice === 'number' && !isNaN(lowestPrice) && (
+                {formattedLowest && (
                   <span className="text-[11px] text-taj-charcoal-light">
                     {isPlusTaxes ? '/ night + taxes' : '/ night total'}
                   </span>
@@ -250,13 +259,13 @@ export const MobileHotelCard: React.FC<MobileHotelCardProps> = ({
               </div>
             </div>
 
-            {typeof totalPrice === 'number' && !isNaN(totalPrice) && typeof lowestPrice === 'number' && totalPrice > lowestPrice && (
+            {formattedTotal && Number(totalPrice) > Number(lowestPrice) && (
               <div className="text-right">
                 <span className="text-[10px] text-taj-charcoal-light block">
                   Stay Total
                 </span>
                 <span className="text-xs font-semibold text-taj-charcoal tabular-nums">
-                  ₹{totalPrice.toLocaleString('en-IN')}
+                  {formattedTotal}
                 </span>
               </div>
             )}
