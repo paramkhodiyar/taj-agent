@@ -2,104 +2,171 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { TajPalace3DLoader } from '@/components/3d/TajPalace3DLoader';
-import { Sparkles, Eye, ArrowLeft, RotateCcw, Zap, Compass, CheckCircle2 } from 'lucide-react';
+import { Taj2DHotel3DLoader } from '@/components/3d/Taj2DHotel3DLoader';
+import { Sparkles, RotateCcw, ArrowLeft, Layers, ShieldCheck, Moon, Sun } from 'lucide-react';
 
 export default function Preview3DLoaderPage() {
-  const [speed, setSpeed] = useState<number>(1);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [key, setKey] = useState<number>(0);
-  const [assembledCount, setAssembledCount] = useState<number>(0);
+  const [size, setSize] = useState<number>(140);
 
   const handleReassemble = () => {
     setKey((prev) => prev + 1);
   };
 
   return (
-    <div className="min-h-screen bg-[#140408] text-taj-cream flex flex-col selection:bg-taj-gold selection:text-black">
-      {/* Top Luxury Preview Navigation Bar */}
-      <header className="w-full border-b border-taj-gold/20 bg-black/40 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === 'dark'
+          ? 'bg-[#140408] text-taj-cream'
+          : 'bg-taj-cream text-taj-charcoal'
+      } flex flex-col font-sans selection:bg-taj-burgundy selection:text-white`}
+    >
+      {/* Top Header */}
+      <header
+        className={`w-full border-b sticky top-0 z-40 transition-colors ${
+          theme === 'dark'
+            ? 'border-taj-gold/20 bg-black/50 backdrop-blur-md'
+            : 'border-taj-gray-border bg-white/90 backdrop-blur-md'
+        }`}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-taj-gold active:scale-95 transition-all"
-              title="Return to Main Application"
+              className={`p-2 rounded-xl transition-all active:scale-95 ${
+                theme === 'dark'
+                  ? 'bg-white/5 hover:bg-white/10 text-taj-gold'
+                  : 'bg-taj-cream hover:bg-taj-cream-warm text-taj-burgundy border border-taj-gray-border'
+              }`}
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4" />
             </Link>
-            <div className="border-l border-taj-gold/30 pl-3">
+            <div className={`border-l pl-3 ${theme === 'dark' ? 'border-taj-gold/30' : 'border-taj-gray-border'}`}>
               <div className="flex items-center gap-2">
-                <span className="font-serif tracking-[0.2em] text-xs sm:text-sm font-semibold text-taj-gold block">
-                  TAJ 3D ARCHITECTURAL LOADER
+                <span
+                  className={`font-serif tracking-[0.18em] text-xs sm:text-sm font-bold block ${
+                    theme === 'dark' ? 'text-taj-gold' : 'text-taj-burgundy'
+                  }`}
+                >
+                  TAJ 2D HOTEL • 3D SPATIAL LOADER
                 </span>
-                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-taj-gold/20 text-taj-gold border border-taj-gold/40">
-                  INTERACTIVE PROTOTYPE
+                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-taj-gold/15 text-taj-gold border border-taj-gold/40">
+                  REFINED PROTOTYPE
                 </span>
               </div>
-              <span className="text-[10px] text-taj-cream/60 font-sans">
-                Procedural Three.js Voxel Assembly from Randomized 3D Vectors
+              <span className={`text-[10px] block ${theme === 'dark' ? 'text-taj-cream/60' : 'text-taj-charcoal-light'}`}>
+                2D Hotel Flat Graphic assembling through 3D Depth &amp; Perspective Vectors
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              type="button"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className={`p-2 rounded-xl border flex items-center gap-1.5 text-xs font-medium transition-all ${
+                theme === 'dark'
+                  ? 'border-taj-gold/30 bg-white/5 text-taj-gold hover:bg-white/10'
+                  : 'border-taj-gray-border bg-white text-taj-charcoal hover:bg-taj-cream'
+              }`}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              <span className="hidden sm:inline">{theme === 'dark' ? 'Taj Ivory Light' : 'Velvet Dark'}</span>
+            </button>
+
             <Link
               href="/"
-              className="px-3.5 py-1.5 rounded-xl border border-taj-gold/40 text-xs font-serif text-taj-gold hover:bg-taj-gold/10 transition-colors"
+              className="px-3.5 py-1.5 bg-taj-burgundy text-white rounded-xl text-xs font-medium hover:bg-taj-burgundy-deep transition-all"
             >
-              Return to App →
+              Back to App →
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Main Showcase Stage */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row gap-6 items-stretch">
-        {/* 3D Canvas Stage Card */}
-        <section className="flex-1 bg-gradient-to-b from-[#24080f] to-[#120306] rounded-3xl border border-taj-gold/30 shadow-[0_20px_60px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col relative min-h-[520px]">
-          <TajPalace3DLoader
-            key={key}
-            speedMultiplier={speed}
-            onAssembled={() => setAssembledCount((c) => c + 1)}
-          />
-        </section>
-
-        {/* Interactive Controls & Architecture Breakdown Sidebar */}
-        <aside className="w-full lg:w-96 flex flex-col gap-4">
-          {/* Controls Panel */}
-          <div className="bg-[#1e070c] border border-taj-gold/30 rounded-3xl p-5 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-taj-gold/20">
-              <h3 className="font-serif text-sm font-semibold text-taj-gold flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-taj-gold" />
-                <span>Simulation Controls</span>
-              </h3>
-              <span className="text-[10px] text-emerald-400 font-mono">
-                {assembledCount > 0 ? `Assembled ${assembledCount}×` : 'In Assembly'}
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col md:flex-row gap-8 items-start">
+        {/* Left: Real-Life Compact Loader Showcase Card */}
+        <div className="flex-1 w-full space-y-6">
+          <div
+            className={`rounded-3xl border p-8 flex flex-col items-center justify-center transition-all shadow-sm ${
+              theme === 'dark'
+                ? 'bg-[#1e070c] border-taj-gold/30 shadow-[0_12px_40px_rgba(0,0,0,0.5)]'
+                : 'bg-white border-taj-gray-border/90 shadow-[0_12px_36px_rgba(36,8,15,0.06)]'
+            }`}
+          >
+            <div className="text-center mb-6">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-taj-gold-muted block mb-1">
+                Compact Icon Presentation
               </span>
+              <h3
+                className={`font-serif text-lg font-bold ${
+                  theme === 'dark' ? 'text-taj-cream' : 'text-taj-burgundy'
+                }`}
+              >
+                2D Hotel Asset assembling in 3D Motion
+              </h3>
+              <p
+                className={`text-xs mt-1 max-w-md ${
+                  theme === 'dark' ? 'text-taj-cream/60' : 'text-taj-charcoal-muted'
+                }`}
+              >
+                The building itself is a clean 2D vector silhouette of the iconic Taj Palace.
+                Its architectural segments fly in from randomized 3D directions and snap into a flat 2D figure.
+              </p>
             </div>
 
-            {/* Speed Selector */}
-            <div className="space-y-2">
-              <label className="text-[11px] uppercase tracking-wider text-taj-cream/70 font-semibold block">
-                Assembly Speed Multiplier
-              </label>
-              <div className="grid grid-cols-3 gap-2">
+            {/* The Compact 3D Loader Component */}
+            <div
+              className={`p-6 rounded-2xl border transition-all ${
+                theme === 'dark'
+                  ? 'bg-black/30 border-taj-gold/20'
+                  : 'bg-taj-cream border-taj-gray-border/80'
+              }`}
+            >
+              <Taj2DHotel3DLoader
+                key={key}
+                size={size}
+                theme={theme}
+                autoReassemble={true}
+                replayIntervalMs={4200}
+                label="The Taj Mahal Palace"
+                sublabel="Assembling Verified Rates…"
+              />
+            </div>
+
+            {/* Scatter & Reassemble Button */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleReassemble}
+                className="px-5 py-2.5 bg-taj-burgundy hover:bg-taj-burgundy-deep text-white text-xs font-serif font-medium tracking-wider uppercase rounded-xl flex items-center gap-2 shadow-md active:scale-95 transition-all cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5 stroke-[2.25] text-taj-gold" />
+                <span>Trigger Scatter &amp; Reassemble</span>
+              </button>
+
+              <div className="flex items-center gap-2">
                 {[
-                  { label: '0.6× Cinematic', val: 0.6 },
-                  { label: '1.0× Realtime', val: 1.0 },
-                  { label: '2.0× Rapid', val: 2.0 },
+                  { label: 'Small (100px)', val: 100 },
+                  { label: 'Standard (140px)', val: 140 },
+                  { label: 'Hero (180px)', val: 180 },
                 ].map((s) => (
                   <button
                     key={s.val}
                     type="button"
                     onClick={() => {
-                      setSpeed(s.val);
+                      setSize(s.val);
                       handleReassemble();
                     }}
-                    className={`py-2 px-1 text-center rounded-xl text-[11px] font-medium border transition-all ${
-                      speed === s.val
-                        ? 'bg-taj-gold text-black font-semibold border-taj-gold shadow-md'
-                        : 'bg-white/5 border-taj-gold/20 text-taj-cream hover:bg-white/10'
+                    className={`px-2.5 py-1.5 rounded-lg text-[10px] font-medium border transition-all ${
+                      size === s.val
+                        ? 'bg-taj-gold text-white border-taj-gold font-bold shadow-xs'
+                        : theme === 'dark'
+                        ? 'bg-white/5 border-white/10 text-taj-cream hover:bg-white/10'
+                        : 'bg-white border-taj-gray-border text-taj-charcoal hover:bg-taj-cream'
                     }`}
                   >
                     {s.label}
@@ -107,76 +174,110 @@ export default function Preview3DLoaderPage() {
                 ))}
               </div>
             </div>
-
-            {/* Reassemble Button */}
-            <button
-              type="button"
-              onClick={handleReassemble}
-              className="w-full py-3 bg-gradient-to-r from-taj-gold to-[#96721e] hover:brightness-110 text-black font-serif font-semibold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
-            >
-              <RotateCcw className="w-4 h-4 stroke-[2.25]" />
-              <span>Scatter & Reassemble Now</span>
-            </button>
           </div>
 
-          {/* Architectural Sequence Spec */}
-          <div className="bg-[#1e070c] border border-taj-gold/30 rounded-3xl p-5 space-y-3 flex-1">
-            <h4 className="font-serif text-xs font-semibold text-taj-gold uppercase tracking-wider">
-              3D Vector Sequence Breakdown
-            </h4>
+          {/* Practical Integration Example (Inside a mock Page Loading Banner) */}
+          <div
+            className={`rounded-2xl border p-5 transition-all ${
+              theme === 'dark' ? 'bg-[#1a060b] border-taj-gold/20' : 'bg-white border-taj-gray-border'
+            }`}
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-semibold text-taj-gold-muted uppercase tracking-wider">
+                How It Appears In-App (Replacing Clunky Loaders)
+              </span>
+            </div>
 
-            <div className="space-y-2.5 text-xs text-taj-cream/80">
-              <div className="flex items-start gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5">
-                <CheckCircle2 className="w-4 h-4 text-taj-gold mt-0.5 flex-shrink-0" />
-                <div>
-                  <strong className="text-white block font-sans">Phase 1: Randomized 3D Sphere</strong>
-                  <p className="text-[11px] text-taj-cream/60">
-                    Over 150 blocks are scattered in a 30-unit spherical radius with randomized Euler rotations.
-                  </p>
+            <div
+              className={`p-4 rounded-xl border flex items-center gap-4 ${
+                theme === 'dark' ? 'bg-black/30 border-white/5' : 'bg-taj-cream border-taj-gray-border/60'
+              }`}
+            >
+              <Taj2DHotel3DLoader
+                size={80}
+                theme={theme}
+                autoReassemble={true}
+                replayIntervalMs={5000}
+                label=""
+                sublabel=""
+              />
+              <div className="space-y-1 flex-1">
+                <div className="flex items-center gap-2">
+                  <h4 className="font-serif text-sm font-semibold text-taj-burgundy">
+                    Loading Room Inventory &amp; Verified Rates
+                  </h4>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 </div>
+                <p className="text-xs text-taj-charcoal-muted leading-relaxed">
+                  Connecting to Taj official booking infrastructure across Mumbai, Goa, Udaipur, and Delhi…
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Architectural 2D Layers Specification */}
+        <aside className="w-full md:w-80 space-y-4">
+          <div
+            className={`rounded-3xl border p-5 space-y-4 ${
+              theme === 'dark' ? 'bg-[#1e070c] border-taj-gold/30' : 'bg-white border-taj-gray-border'
+            }`}
+          >
+            <div className="flex items-center gap-2 pb-3 border-b border-taj-gray-border/60">
+              <Layers className="w-4 h-4 text-taj-gold" />
+              <h4 className="font-serif text-xs font-bold uppercase tracking-wider text-taj-gold-muted">
+                2D Asset • 3D Movement Spec
+              </h4>
+            </div>
+
+            <div className="space-y-3 text-xs leading-relaxed">
+              <div
+                className={`p-3 rounded-xl border ${
+                  theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-taj-cream border-taj-gray-border/60'
+                }`}
+              >
+                <strong className="block text-taj-burgundy font-serif font-bold text-xs mb-0.5">
+                  1. Asset is 100% 2D Flat Vector
+                </strong>
+                <p className="text-[11px] text-taj-charcoal-muted">
+                  No blocky 3D voxels or heavy meshes. Razor-sharp vector shapes: Saracenic grand onion dome, Victorian flanking turrets, arched colonnades, and the Taj royal crest.
+                </p>
               </div>
 
-              <div className="flex items-start gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5">
-                <CheckCircle2 className="w-4 h-4 text-taj-gold mt-0.5 flex-shrink-0" />
-                <div>
-                  <strong className="text-white block font-sans">Phase 2: Foundation & Colonnade</strong>
-                  <p className="text-[11px] text-taj-cream/60">
-                    Stone podium and Saracenic arched colonnades fly in and lock into ground coordinates.
-                  </p>
-                </div>
+              <div
+                className={`p-3 rounded-xl border ${
+                  theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-taj-cream border-taj-gray-border/60'
+                }`}
+              >
+                <strong className="block text-taj-burgundy font-serif font-bold text-xs mb-0.5">
+                  2. Movement is in Full 3D Space
+                </strong>
+                <p className="text-[11px] text-taj-charcoal-muted">
+                  Each 2D layer originates displaced along random 3D vectors (X, Y, and Z depth planes up to 140px in space) with rotational pitch, yaw, and roll.
+                </p>
               </div>
 
-              <div className="flex items-start gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5">
-                <CheckCircle2 className="w-4 h-4 text-taj-gold mt-0.5 flex-shrink-0" />
-                <div>
-                  <strong className="text-white block font-sans">Phase 3: Domes & Turrets</strong>
-                  <p className="text-[11px] text-taj-cream/60">
-                    The iconic central onion dome and Victorian flanking turrets assemble seamlessly.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5 p-2 rounded-xl bg-white/5 border border-white/5">
-                <CheckCircle2 className="w-4 h-4 text-taj-gold mt-0.5 flex-shrink-0" />
-                <div>
-                  <strong className="text-white block font-sans">Phase 4: Sovereign Taj Crest</strong>
-                  <p className="text-[11px] text-taj-cream/60">
-                    The golden Taj royal finial descends onto the dome crown with particle radiance.
-                  </p>
-                </div>
+              <div
+                className={`p-3 rounded-xl border ${
+                  theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-taj-cream border-taj-gray-border/60'
+                }`}
+              >
+                <strong className="block text-taj-burgundy font-serif font-bold text-xs mb-0.5">
+                  3. Precision Assembly Snap
+                </strong>
+                <p className="text-[11px] text-taj-charcoal-muted">
+                  Smooth cubic physics pull all 2D layers simultaneously out of 3D depth, locking them seamlessly into the unified 2D Taj Palace silhouette.
+                </p>
               </div>
             </div>
 
-            {/* Quick Link to Test in Full App */}
-            <div className="pt-2 border-t border-taj-gold/20">
-              <p className="text-[11px] text-taj-cream/60 mb-2">
-                Click and drag on the 3D model to orbit 360° in perspective.
-              </p>
+            <div className="pt-2">
               <Link
-                href="/results?searchId=demo&autoFetch=false"
-                className="w-full py-2 bg-white/10 hover:bg-white/20 text-taj-gold text-center block rounded-xl text-xs font-medium transition-colors"
+                href="/"
+                className="w-full py-2.5 bg-taj-cream-warm hover:bg-taj-gray-border/60 text-taj-burgundy text-center block rounded-xl text-xs font-semibold border border-taj-gray-border transition-colors"
               >
-                View Search Results Page →
+                ← Return to Search App
               </Link>
             </div>
           </div>

@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { Taj2DHotel3DLoader } from '@/components/3d/Taj2DHotel3DLoader';
+
 interface TajPageLoaderProps {
   title?: string;
   subtitle?: string;
@@ -21,18 +23,16 @@ export const TajPageLoader: React.FC<TajPageLoaderProps> = ({
 }) => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-fade-in">
-      {/* Royal Crest Loading Indicator */}
-      <div className="flex flex-col items-center justify-center py-6 text-center space-y-3">
-        <div className="relative">
-          <div className="w-16 h-16 rounded-full bg-white border-2 border-taj-gold/30 shadow-md flex items-center justify-center relative z-10">
-            <img
-              src="/taj-logo.svg"
-              alt="Taj Royal Crest"
-              className="w-10 h-10 object-contain animate-pulse"
-            />
-          </div>
-          <span className="absolute -inset-1.5 rounded-full bg-taj-gold/20 animate-ping opacity-60 pointer-events-none" />
-        </div>
+      {/* 2D Hotel Figure Assembling in 3D Motion */}
+      <div className="flex flex-col items-center justify-center py-2 text-center space-y-1">
+        <Taj2DHotel3DLoader
+          size={110}
+          theme="light"
+          label=""
+          sublabel=""
+          autoReassemble={true}
+          replayIntervalMs={4500}
+        />
 
         <div className="space-y-1">
           <h2 className="font-serif text-lg sm:text-xl font-semibold text-taj-burgundy tracking-wide">
