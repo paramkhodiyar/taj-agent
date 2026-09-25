@@ -26,8 +26,8 @@ export default function Preview3DLoaderPage() {
       <header
         className={`w-full border-b sticky top-0 z-40 transition-colors ${
           theme === 'dark'
-            ? 'border-taj-gold/20 bg-black/50 backdrop-blur-md'
-            : 'border-taj-gray-border bg-white/90 backdrop-blur-md'
+            ? 'border-taj-gold/20 bg-[#140408]'
+            : 'border-taj-gray-border bg-white'
         }`}
       >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -204,7 +204,7 @@ export default function Preview3DLoaderPage() {
                   <h4 className="font-serif text-xs font-bold text-taj-burgundy">
                     Accessing Verified Observation Pipeline
                   </h4>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                 </div>
                 <p className="text-[11px] text-taj-charcoal-muted leading-relaxed">
                   Streaming official rate plans across Taj properties…
@@ -238,7 +238,7 @@ export default function Preview3DLoaderPage() {
                   6 Crest Facets
                 </strong>
                 <p className="text-[10px] text-taj-charcoal-muted">
-                  The hexagonal floral mandala facets scatter in 3D depth and converge into the royal crest rosette.
+                  The hexagonal floral mandala facets assemble sequentially into the royal crest rosette.
                 </p>
               </div>
 
@@ -251,7 +251,7 @@ export default function Preview3DLoaderPage() {
                   3 Typography Characters
                 </strong>
                 <p className="text-[10px] text-taj-charcoal-muted">
-                  The letters &apos;T&apos;, &apos;A&apos;, and &apos;J&apos; fly in from separate 3D trajectories and lock onto the baseline.
+                  The letters &apos;T&apos;, &apos;A&apos;, and &apos;J&apos; snap onto the baseline one by one.
                 </p>
               </div>
 
@@ -264,7 +264,7 @@ export default function Preview3DLoaderPage() {
                   Authentic Taj Gold Palette
                 </strong>
                 <p className="text-[10px] text-taj-charcoal-muted">
-                  Imperial Gold (#b88e2e / #d4af37) with subtle ambient drop shadows. Zero extraneous shapes.
+                  Imperial Gold (#b88e2e) on architectural blueprint wireframe. Zero shadows, zero glows.
                 </p>
               </div>
             </div>

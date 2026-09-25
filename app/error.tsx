@@ -24,7 +24,7 @@ export default function ErrorBoundary({
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-16 flex flex-col items-center justify-center text-center">
         {/* Crest & Warning */}
-        <div className="w-16 h-16 rounded-full bg-white border border-taj-gold/40 shadow-sm flex items-center justify-center mb-6">
+        <div className="w-16 h-16 rounded-full bg-white border border-taj-gold/40 flex items-center justify-center mb-6">
           <img
             src="/taj-logo.svg"
             alt="Taj Official Crest"
@@ -55,7 +55,7 @@ export default function ErrorBoundary({
           <button
             type="button"
             onClick={() => reset()}
-            className="px-6 py-3 bg-taj-burgundy hover:bg-taj-burgundy-deep text-white text-xs font-serif font-medium uppercase tracking-wider rounded-xl shadow-sm flex items-center gap-2 active:scale-95 transition-all cursor-pointer"
+            className="px-6 py-3 bg-taj-burgundy hover:bg-taj-burgundy-deep text-white text-xs font-serif font-medium uppercase tracking-wider rounded-xl flex items-center gap-2 active:scale-95 transition-all cursor-pointer"
           >
             <RotateCcw className="w-4 h-4 text-taj-gold" />
             <span>Try Again</span>

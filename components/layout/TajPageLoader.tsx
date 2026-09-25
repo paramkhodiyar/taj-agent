@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-
 import { TajLogo3DLoader } from '@/components/3d/TajLogo3DLoader';
 
 interface TajPageLoaderProps {
@@ -11,10 +10,11 @@ interface TajPageLoaderProps {
 }
 
 /**
- * TajPageLoader — Opulent Streaming Loading Screen & Skeleton
+ * TajPageLoader — Clean, Restrained Loading Screen & Wireframe Skeleton
  * 
- * Provides instantaneous visual feedback on Next.js page transitions,
- * eliminating perception of latency during serverless database queries.
+ * Strict Standards:
+ * - Zero shadows, zero glows, zero blur, zero shimmers, zero pulse.
+ * - Solid, architectural piece-by-piece emblem assembly.
  */
 export const TajPageLoader: React.FC<TajPageLoaderProps> = ({
   title = 'Accessing Verified Intelligence',
@@ -23,8 +23,8 @@ export const TajPageLoader: React.FC<TajPageLoaderProps> = ({
 }) => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-fade-in">
-      {/* Official Taj Logo Assembling in 3D Motion */}
-      <div className="flex flex-col items-center justify-center py-2 text-center space-y-1">
+      {/* Official Taj Logo Assembling Piece by Piece */}
+      <div className="flex flex-col items-center justify-center py-2 text-center space-y-2">
         <TajLogo3DLoader
           size={76}
           theme="light"
@@ -43,29 +43,27 @@ export const TajPageLoader: React.FC<TajPageLoaderProps> = ({
           </p>
         </div>
 
-        {/* Linear Gold Shimmer Progress Bar */}
-        <div className="w-48 h-1 bg-taj-gray-border/80 rounded-full overflow-hidden relative">
-          <div className="absolute inset-y-0 left-0 bg-taj-gold rounded-full w-1/3 animate-[shimmer_1.4s_infinite]" />
-        </div>
+        {/* Clean Hairline Gold Divider - Zero Shimmer, Zero Glow */}
+        <div className="w-24 h-[1px] bg-taj-gold/40 mt-1" />
       </div>
 
-      {/* Contextual Skeletons */}
+      {/* Contextual Wireframe Skeletons - Zero Glow, Zero Pulse */}
       {type === 'hotel' ? (
-        /* Hotel Detail Skeleton */
+        /* Hotel Detail Wireframe */
         <div className="space-y-6">
-          <div className="h-64 sm:h-96 w-full bg-gradient-to-r from-taj-cream-warm via-white to-taj-cream-warm animate-pulse rounded-2xl border border-taj-gray-border/60" />
+          <div className="h-64 sm:h-96 w-full bg-taj-cream-warm/70 rounded-2xl border border-taj-gray-border" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="h-32 bg-white rounded-xl border border-taj-gray-border/60 animate-pulse" />
-            <div className="h-32 bg-white rounded-xl border border-taj-gray-border/60 animate-pulse" />
-            <div className="h-32 bg-white rounded-xl border border-taj-gray-border/60 animate-pulse" />
+            <div className="h-32 bg-white rounded-xl border border-taj-gray-border" />
+            <div className="h-32 bg-white rounded-xl border border-taj-gray-border" />
+            <div className="h-32 bg-white rounded-xl border border-taj-gray-border" />
           </div>
-          <div className="h-64 bg-white rounded-xl border border-taj-gray-border/60 animate-pulse" />
+          <div className="h-64 bg-white rounded-xl border border-taj-gray-border" />
         </div>
       ) : type === 'results' ? (
-        /* Search Results Skeleton */
+        /* Search Results Wireframe */
         <div className="space-y-6">
-          {/* Featured Card Skeleton */}
-          <div className="h-72 w-full bg-white rounded-2xl border-2 border-taj-gold/20 p-6 flex flex-col md:flex-row gap-6 animate-pulse">
+          {/* Featured Card Wireframe */}
+          <div className="h-72 w-full bg-white rounded-2xl border border-taj-gold/40 p-6 flex flex-col md:flex-row gap-6">
             <div className="w-full md:w-1/2 h-full bg-taj-cream-warm rounded-xl" />
             <div className="w-full md:w-1/2 space-y-4">
               <div className="h-6 w-3/4 bg-taj-cream-warm rounded" />
@@ -75,12 +73,12 @@ export const TajPageLoader: React.FC<TajPageLoaderProps> = ({
             </div>
           </div>
 
-          {/* Cards Grid Skeleton */}
+          {/* Cards Grid Wireframe */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl border border-taj-gray-border overflow-hidden h-96 animate-pulse flex flex-col"
+                className="bg-white rounded-2xl border border-taj-gray-border overflow-hidden h-96 flex flex-col"
               >
                 <div className="h-48 w-full bg-taj-cream-warm" />
                 <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
@@ -95,12 +93,12 @@ export const TajPageLoader: React.FC<TajPageLoaderProps> = ({
           </div>
         </div>
       ) : (
-        /* Default Page Skeleton */
+        /* Default Page Wireframe */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="bg-white rounded-xl border border-taj-gray-border p-6 space-y-4 animate-pulse h-60"
+              className="bg-white rounded-xl border border-taj-gray-border p-6 space-y-4 h-60"
             >
               <div className="h-6 w-2/3 bg-taj-cream-warm rounded" />
               <div className="h-4 w-1/2 bg-taj-cream-warm rounded" />
@@ -112,3 +110,4 @@ export const TajPageLoader: React.FC<TajPageLoaderProps> = ({
     </div>
   );
 };
+
