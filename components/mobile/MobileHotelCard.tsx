@@ -238,15 +238,19 @@ export const MobileHotelCard: React.FC<MobileHotelCardProps> = ({
               </span>
               <div className="flex items-baseline gap-1">
                 <span className="font-serif text-xl font-bold text-taj-burgundy tabular-nums">
-                  ₹{lowestPrice.toLocaleString('en-IN')}
+                  {typeof lowestPrice === 'number' && !isNaN(lowestPrice)
+                    ? `₹${lowestPrice.toLocaleString('en-IN')}`
+                    : 'Check Rates'}
                 </span>
-                <span className="text-[11px] text-taj-charcoal-light">
-                  {isPlusTaxes ? '/ night + taxes' : '/ night total'}
-                </span>
+                {typeof lowestPrice === 'number' && !isNaN(lowestPrice) && (
+                  <span className="text-[11px] text-taj-charcoal-light">
+                    {isPlusTaxes ? '/ night + taxes' : '/ night total'}
+                  </span>
+                )}
               </div>
             </div>
 
-            {totalPrice && totalPrice > lowestPrice && (
+            {typeof totalPrice === 'number' && !isNaN(totalPrice) && typeof lowestPrice === 'number' && totalPrice > lowestPrice && (
               <div className="text-right">
                 <span className="text-[10px] text-taj-charcoal-light block">
                   Stay Total
@@ -271,7 +275,7 @@ export const MobileHotelCard: React.FC<MobileHotelCardProps> = ({
               href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="min-h-[48px] px-3 rounded-xl bg-taj-burgundy hover:bg-taj-burgundy-deep text-white font-medium text-xs flex items-center justify-center gap-1.5 text-center shadow-xs active:scale-95 transition-all"
+              className="min-h-[48px] px-3 rounded-xl bg-taj-burgundy hover:bg-taj-burgundy-deep text-white font-medium text-xs flex items-center justify-center gap-1.5 text-center active:scale-95 transition-all"
             >
               <span>Book Taj</span>
               <ExternalLink className="w-3.5 h-3.5 text-taj-gold stroke-[2]" />
