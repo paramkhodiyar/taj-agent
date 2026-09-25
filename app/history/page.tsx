@@ -5,6 +5,7 @@ import { Footer } from '@/components/layout/Footer';
 import { PriceDisplay } from '@/components/pricing/PriceDisplay';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function HistoryPage() {

@@ -11,6 +11,7 @@ import { PriceHistoryChart, SnapshotHistoryPoint } from '@/components/pricing/Pr
 import { computeFreshness } from '@/lib/freshness';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function HotelDetailPage({

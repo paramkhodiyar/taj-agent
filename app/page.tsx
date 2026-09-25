@@ -6,6 +6,7 @@ import { IntelligenceAssistant } from '@/components/assistant/IntelligenceAssist
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0; // Fresh DB reads
 
 export default async function HomePage() {
