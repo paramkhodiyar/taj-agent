@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Taj Exotica Goa - Deluxe BAR",
+    "hotelId": "taj-exotica-resort-spa-goa",
+    "search": {
+      "checkIn": "2026-11-15",
+      "checkOut": "2026-11-17",
+      "adults": 2,
+      "children": 0,
+      "rooms": 1
+    },
+    "raw": {
+      "sourceRoomName": "Deluxe Room City View King Bed",
+      "sourceRateName": "Best Available Rate (Room Only)",
+      "rawPrice": "₹26,000",
+      "rawTax": "₹9,360",
+      "rawTotal": "₹61,360",
+      "rawMealPlan": "Room only",
+      "rawCancellationPolicy": "Flexible cancellation up to 48 hours prior to check-in",
+      "rawAvailability": "AVAILABLE"
+    },
+    "expected": {
+      "canonicalRoomName": "Deluxe Room",
+      "canonicalRateName": "Best Available Rate",
+      "currency": "INR",
+      "pricePerNight": 26000,
+      "totalPrice": 61360,
+      "isFlexible": true,
+      "verificationState": "VERIFIED"
+    }
+  },
+  {
+    "name": "The Taj Mahal Palace Mumbai - Palace Sea View MAP",
+    "hotelId": "taj-mahal-palace-mumbai",
+    "search": {
+      "checkIn": "2026-12-01",
+      "checkOut": "2026-12-03",
+      "adults": 2,
+      "children": 0,
+      "rooms": 1
+    },
+    "raw": {
+      "sourceRoomName": "Luxury Room Palace / Sea View",
+      "sourceRateName": "Taj Experiential Dining Rate (Breakfast & Dinner)",
+      "rawPrice": "₹44,000",
+      "rawTax": "₹15,840",
+      "rawTotal": "₹1,03,840",
+      "rawMealPlan": "Breakfast & Dinner included",
+      "rawCancellationPolicy": "Flexible cancellation up to 72 hours prior to check-in",
+      "rawAvailability": "AVAILABLE"
+    },
+    "expected": {
+      "canonicalRoomName": "Luxury Room",
+      "canonicalRateName": "Taj Experiential Dining Rate",
+      "currency": "INR",
+      "pricePerNight": 44000,
+      "totalPrice": 103840,
+      "isFlexible": true,
+      "verificationState": "VERIFIED"
+    }
+  },
+  {
+    "name": "Taj Lake Palace Udaipur - Advance Purchase Non-Refundable",
+    "hotelId": "taj-lake-palace-udaipur",
+    "search": {
+      "checkIn": "2026-10-10",
+      "checkOut": "2026-10-12",
+      "adults": 2,
+      "children": 0,
+      "rooms": 1
+    },
+    "raw": {
+      "sourceRoomName": "Deluxe Room Lake View",
+      "sourceRateName": "Advance Purchase Non-Refundable",
+      "rawPrice": "₹38,000",
+      "rawTax": "₹13,680",
+      "rawTotal": "₹89,680",
+      "rawMealPlan": "Room only",
+      "rawCancellationPolicy": "Non-refundable once booked",
+      "rawAvailability": "AVAILABLE"
+    },
+    "expected": {
+      "canonicalRoomName": "Deluxe Room",
+      "canonicalRateName": "Advance Purchase Non-Refundable",
+      "currency": "INR",
+      "pricePerNight": 38000,
+      "totalPrice": 89680,
+      "isFlexible": false,
+      "verificationState": "VERIFIED"
+    }
+  }
+]

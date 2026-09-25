@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-taj-burgundy: #4a1521;
+  --color-taj-burgundy-deep: #360e17;
+  --color-taj-burgundy-darkest: #24080f;
+  --color-taj-gold: #b88e2e;
+  --color-taj-gold-muted: #96721e;
+  --color-taj-cream: #fbf9f5;
+  --color-taj-cream-warm: #f5efe6;
+  --color-taj-charcoal: #1f1d1d;
+  --color-taj-charcoal-muted: #57524e;
+  --color-taj-charcoal-light: #78716c;
+  --color-taj-gray-warm: #7d7571;
+  --color-taj-gray-border: #e2ddd8;
+  --color-taj-status-verified: #047857;
+  --color-taj-status-recent: #4b5563;
+  --color-taj-status-stale: #b45309;
+  --color-taj-status-failed: #b91c1c;
+
+  --font-serif: "Cinzel", "Playfair Display", "Georgia", serif;
+  --font-sans: "Plus Jakarta Sans", "Inter", -apple-system, sans-serif;
+}
+
+:root {
+  --color-taj-burgundy: #4a1521;
+  --color-taj-burgundy-deep: #360e17;
+  --color-taj-gold: #b88e2e;
+  --color-taj-gold-muted: #96721e;
+  --color-taj-cream: #fbf9f5;
+  --color-taj-cream-warm: #f5efe6;
+  --color-taj-charcoal: #1f1d1d;
+  --color-taj-charcoal-muted: #57524e;
+  --color-taj-charcoal-light: #78716c;
+  --color-taj-gray-warm: #7d7571;
+  --color-taj-gray-border: #e2ddd8;
+}
+
+body {
+  color: #1f1d1d;
+  background-color: #fbf9f5;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .font-serif {
+  font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+  letter-spacing: 0.02em;
+}
+
+/* Tabular figures for prices per 01-PRODUCT-AND-UI.md §6.1 */
+.price-tabular,
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Clean restrained animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}

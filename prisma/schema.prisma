@@ -1,0 +1,317 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------------------------------------------
+// Core Taj Properties & Inventory
+// -------------------------------------------------------------
+
+model Hotel {
+  id                 String     @id // Canonical ID e.g. "taj-mahal-palace-mumbai"
+  canonicalName      String     // e.g. "The Taj Mahal Palace"
+  slug               String     @unique // e.g. "taj-mahal-palace-mumbai"
+  brand              String     @default("Taj") // "Taj", "SeleQtions", "Vivanta"
+  city               String     // e.g. "Mumbai"
+  state              String     // e.g. "Maharashtra"
+  country            String     @default("India")
+  address            String?
+  description        String?    @db.Text
+  starRating         Int?       @default(5)
+  source             String     @default("taj_official")
+  officialBookingUrl String?
+  latitude           Float?
+  longitude          Float?
+  isActive           Boolean    @default(true)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  assets             HotelAsset[]
+  rooms              Room[]
+  searchHotels       SearchHotel[]
+  fetchRunHotels     FetchRunHotel[]
+  priceSnapshots     PriceSnapshot[]
+  availability       AvailabilitySnapshot[]
+  trackedSearches    TrackedSearch[]
+  agentEvents        AgentEvent[]
+  agentErrors        AgentError[]
+
+  @@index([city])
+  @@index([isActive])
+}
+
+model HotelAsset {
+  id            String    @id @default(cuid())
+  hotelId       String
+  type          String    // "hero", "gallery", "room", "logo", "thumbnail"
+  url           String
+  source        String    @default("taj_official")
+  sourceUrl     String?
+  altText       String?
+  width         Int?
+  height        Int?
+  licenseStatus String?   @default("official_media")
+  fetchedAt     DateTime  @default(now())
+
+  hotel         Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  @@index([hotelId, type])
+}
+
+model Room {
+  id                 String     @id @default(cuid())
+  hotelId            String
+  canonicalRoomName  String     // Normalized name e.g. "Deluxe Room"
+  sourceRoomName     String     // Original source name e.g. "Deluxe Room City View King Bed"
+  roomCode           String?    // Property internal room code
+  description        String?    @db.Text
+  viewType           String?    // e.g. "Sea View", "City View", "Garden View"
+  bedType            String?    // e.g. "King", "Twin"
+  capacityAdults     Int        @default(2)
+  capacityChildren   Int        @default(0)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  hotel              Hotel      @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  priceSnapshots     PriceSnapshot[]
+  availability       AvailabilitySnapshot[]
+
+  @@unique([hotelId, canonicalRoomName])
+  @@index([hotelId])
+}
+
+model RatePlan {
+  id                  String     @id @default(cuid())
+  canonicalRateName   String     // Normalized e.g. "Best Available Rate"
+  sourceRateName      String     // Source name e.g. "Member Rate Bed and Breakfast"
+  rateCode            String?    // e.g. "BAR", "CP", "MAP"
+  mealPlan            String     // "Room only", "Breakfast included", "Half board"
+  cancellationPolicy  String     // "Flexible cancellation", "Non-refundable", etc.
+  isFlexible          Boolean    @default(false)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  priceSnapshots      PriceSnapshot[]
+
+  @@unique([canonicalRateName, mealPlan, cancellationPolicy])
+}
+
+// -------------------------------------------------------------
+// Search & Job Management
+// -------------------------------------------------------------
+
+model Search {
+  id           String         @id @default(cuid())
+  checkIn      DateTime       @db.Date
+  checkOut     DateTime       @db.Date
+  adults       Int            @default(2)
+  children     Int            @default(0)
+  rooms        Int            @default(1)
+  createdAt    DateTime       @default(now())
+
+  searchHotels SearchHotel[]
+  fetchRuns    FetchRun[]
+  snapshots    PriceSnapshot[]
+
+  @@index([checkIn, checkOut, adults, rooms])
+}
+
+model SearchHotel {
+  id        String   @id @default(cuid())
+  searchId  String
+  hotelId   String
+  status    String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  error     String?
+  updatedAt DateTime @updatedAt
+
+  search    Search   @relation(fields: [searchId], references: [id], onDelete: Cascade)
+  hotel     Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  @@unique([searchId, hotelId])
+}
+
+model FetchRun {
+  id               String          @id @default(cuid())
+  searchId         String?
+  requestedAt      DateTime        @default(now())
+  startedAt        DateTime?
+  completedAt      DateTime?
+  status           String          @default("QUEUED") // QUEUED, RUNNING, COMPLETED, PARTIAL, FAILED
+  requestedHotels  Int             @default(0)
+  successfulHotels Int             @default(0)
+  failedHotels     Int             @default(0)
+  searchParameters Json?
+  agentVersion     String          @default("1.0.0")
+  extractorVersion String          @default("taj-booking-v1")
+  rawPayload       Json?
+  errorMessage     String?
+
+  search           Search?         @relation(fields: [searchId], references: [id], onDelete: SetNull)
+  fetchRunHotels   FetchRunHotel[]
+  priceSnapshots   PriceSnapshot[]
+  agentEvents      AgentEvent[]
+  agentErrors      AgentError[]
+
+  @@index([status, requestedAt])
+  @@index([searchId])
+}
+
+model FetchRunHotel {
+  id                String    @id @default(cuid())
+  fetchRunId        String
+  hotelId           String
+  status            String    @default("QUEUED") // QUEUED, RUNNING, COMPLETED, FAILED, UNAVAILABLE
+  roomsFound        Int       @default(0)
+  ratesFound        Int       @default(0)
+  validationPassed  Boolean   @default(false)
+  validationMessage String?
+  error             String?
+  rawResponse       Json?
+  startedAt         DateTime?
+  completedAt       DateTime?
+
+  fetchRun          FetchRun  @relation(fields: [fetchRunId], references: [id], onDelete: Cascade)
+  hotel             Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  @@index([fetchRunId, status])
+  @@index([hotelId])
+}
+
+// -------------------------------------------------------------
+// Immutable Price Snapshots (03-DATA-AND-AGENT.md §6 & §7)
+// NOTE: No unique constraint across search/hotel/room. 
+// Every observation is an immutable new append-only row.
+// -------------------------------------------------------------
+
+model PriceSnapshot {
+  id                  String    @id @default(cuid())
+  hotelId             String
+  roomId              String
+  ratePlanId          String
+  searchId            String?
+  fetchRunId          String?
+
+  checkIn             DateTime  @db.Date
+  checkOut            DateTime  @db.Date
+  adults              Int
+  children            Int       @default(0)
+  rooms               Int       @default(1)
+
+  currency            String    @default("INR")
+  basePrice           Decimal?  @db.Decimal(12, 2)
+  taxAmount           Decimal?  @db.Decimal(12, 2)
+  feeAmount           Decimal?  @db.Decimal(12, 2)
+  totalPrice          Decimal?  @db.Decimal(12, 2)
+  pricePerNight       Decimal   @db.Decimal(12, 2)
+
+  mealPlan            String?
+  cancellationPolicy  String?
+  availabilityStatus  String    @default("AVAILABLE") // AVAILABLE, SOLD_OUT, CALL_HOTEL
+
+  // Verification state per 03-DATA-AND-AGENT.md §10
+  verificationState   String    @default("VERIFIED") // VERIFIED, PARTIALLY_VERIFIED, ANOMALOUS, FAILED, UNAVAILABLE
+  verificationReason  String?
+
+  source              String    @default("taj_official")
+  sourceUrl           String?
+  rawRecordHash       String?
+
+  fetchedAt           DateTime  @default(now())
+
+  hotel               Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  room                Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  ratePlan            RatePlan  @relation(fields: [ratePlanId], references: [id], onDelete: Cascade)
+  search              Search?   @relation(fields: [searchId], references: [id], onDelete: SetNull)
+  fetchRun            FetchRun? @relation(fields: [fetchRunId], references: [id], onDelete: SetNull)
+
+  @@index([hotelId, checkIn, checkOut])
+  @@index([hotelId, roomId, ratePlanId, fetchedAt])
+  @@index([fetchedAt])
+  @@index([fetchRunId])
+  @@index([verificationState])
+}
+
+model AvailabilitySnapshot {
+  id          String    @id @default(cuid())
+  hotelId     String
+  roomId      String?
+  checkIn     DateTime  @db.Date
+  checkOut    DateTime  @db.Date
+  status      String    // AVAILABLE, SOLD_OUT, CLOSED
+  source      String    @default("taj_official")
+  fetchRunId  String?
+  fetchedAt   DateTime  @default(now())
+
+  hotel       Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  room        Room?     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([hotelId, checkIn, checkOut, fetchedAt])
+}
+
+// -------------------------------------------------------------
+// Tracked Searches & Scheduling (03-DATA-AND-AGENT.md §11)
+// -------------------------------------------------------------
+
+model TrackedSearch {
+  id                   String    @id @default(cuid())
+  hotelId              String?   // null means all Taj properties
+  checkIn              DateTime  @db.Date
+  checkOut             DateTime  @db.Date
+  adults               Int       @default(2)
+  children             Int       @default(0)
+  rooms                Int       @default(1)
+  targetPriceThreshold Decimal?  @db.Decimal(12, 2)
+  notifyEmail          String?
+  notifyPhone          String?
+  isActive             Boolean   @default(true)
+  lastCheckedAt        DateTime?
+  lastNotifiedAt       DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  hotel                Hotel?    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  @@index([isActive, checkIn])
+}
+
+// -------------------------------------------------------------
+// Agent Observability & Audit Log (03-DATA-AND-AGENT.md §15)
+// -------------------------------------------------------------
+
+model AgentEvent {
+  id         String    @id @default(cuid())
+  fetchRunId String?
+  hotelId    String?
+  eventType  String    // RESOLVE, FETCH_START, FETCH_SUCCESS, VALIDATION_PASS, ANOMALY_FLAG
+  severity   String    @default("INFO") // INFO, WARN, ERROR
+  message    String
+  payload    Json?
+  timestamp  DateTime  @default(now())
+
+  fetchRun   FetchRun? @relation(fields: [fetchRunId], references: [id], onDelete: Cascade)
+  hotel      Hotel?    @relation(fields: [hotelId], references: [id], onDelete: SetNull)
+
+  @@index([fetchRunId, timestamp])
+  @@index([eventType])
+}
+
+model AgentError {
+  id         String    @id @default(cuid())
+  fetchRunId String?
+  hotelId    String?
+  errorCode  String    // TIMEOUT, RATE_LIMIT, CAPTCHA, PARSE_FAILURE, ANOMALY
+  message    String
+  stackTrace String?   @db.Text
+  rawResponse Json?
+  timestamp  DateTime  @default(now())
+
+  fetchRun   FetchRun? @relation(fields: [fetchRunId], references: [id], onDelete: Cascade)
+  hotel      Hotel?    @relation(fields: [hotelId], references: [id], onDelete: SetNull)
+
+  @@index([fetchRunId, timestamp])
+  @@index([errorCode])
+}
