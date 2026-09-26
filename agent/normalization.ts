@@ -36,9 +36,19 @@ export function normalize_inventory(
   let totalPrice = totalResult.amount;
   let pricePerNight = basePrice ?? 0;
 
-  // If total price was given instead of nightly rate, or if nightly rate was given
-  if (basePrice !== null && totalPrice === null) {
-    if (taxAmount !== null) {
+  // Compute 18% GST (standard Indian luxury hospitality tax) and comprehensive total
+  if (basePrice !== null) {
+    if (taxAmount === null || taxAmount === 0) {
+      taxAmount = Math.round(basePrice * 0.18 * nights);
+    } else if (nights > 1 && Math.abs(taxAmount - Math.round(basePrice * 0.18)) <= 50) {
+      // taxAmount was provided on a per-night basis, scale to full stay
+      taxAmount = taxAmount * nights;
+    }
+
+    if (totalPrice === null) {
+      totalPrice = (basePrice * nights) + taxAmount + (feeAmount ?? 0);
+    } else if (nights > 1 && Math.abs(totalPrice - (basePrice + Math.round(taxAmount / nights))) <= 100) {
+      // totalPrice was provided on a per-night basis, scale to full stay
       totalPrice = (basePrice * nights) + taxAmount + (feeAmount ?? 0);
     }
   }
@@ -51,6 +61,7 @@ export function normalize_inventory(
     price: rawRecord.rawPrice,
     tax: rawRecord.rawTax,
     total: rawRecord.rawTotal,
+    mealPlan: rawRecord.rawMealPlan,
     checkIn: checkInDate.toISOString(),
     checkOut: checkOutDate.toISOString(),
     adults: search.adults,
@@ -58,6 +69,7 @@ export function normalize_inventory(
   const rawRecordHash = crypto.createHash('sha256').update(hashPayload).digest('hex');
 
   const availability = extract_availability(rawRecord.rawAvailability);
+  const resolvedMealPlan = rawRecord.rawMealPlan?.trim() || rate.mealPlan;
 
   return {
     hotelId,
@@ -66,7 +78,7 @@ export function normalize_inventory(
     canonicalRateName: rate.canonicalRateName,
     sourceRateName: rate.sourceRateName,
     rateCode: rate.rateCode,
-    mealPlan: rate.mealPlan,
+    mealPlan: resolvedMealPlan,
     cancellationPolicy: rate.cancellationPolicy,
     isFlexible: rate.isFlexible,
     currency: priceResult.currency || 'INR',

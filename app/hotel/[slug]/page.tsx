@@ -7,7 +7,8 @@ import { PriceDisplay } from '@/components/pricing/PriceDisplay';
 import { FreshnessBadge } from '@/components/pricing/FreshnessBadge';
 import { RoomRateTable } from '@/components/pricing/RoomRateTable';
 import { PriceStats } from '@/components/pricing/PriceStats';
-import { PriceHistoryChart, SnapshotHistoryPoint } from '@/components/pricing/PriceHistoryChart';
+import { SnapshotHistoryPoint } from '@/components/pricing/PriceHistoryChart';
+import { PriceHistorySection } from '@/components/pricing/PriceHistorySection';
 import { computeFreshness } from '@/lib/freshness';
 import { MobileStickyActionBar } from '@/components/mobile/MobileStickyActionBar';
 import Link from 'next/link';
@@ -257,21 +258,14 @@ export default async function HotelDetailPage({
           <RoomRateTable items={matrixItems} />
         </section>
 
-        {/* Section 3: Price History Chart */}
+        {/* Section 3: Price History Intelligence with Room Filter */}
         <section className="space-y-4">
-          <PriceHistoryChart
-            snapshots={chartPoints}
-            low30D={stats?.low}
-            high30D={stats?.high}
-            median30D={stats?.median}
+          <PriceHistorySection
+            slug={slug}
+            initialSnapshots={chartPoints}
             officialBookingUrl={hotel.officialBookingUrl}
             hotelName={hotel.canonicalName}
           />
-        </section>
-
-        {/* Section 4: Authoritative Historical Stats */}
-        <section className="space-y-4">
-          <PriceStats stats={stats} />
         </section>
 
         {/* Section 5: Hotel Information & Location */}

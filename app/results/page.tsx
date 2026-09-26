@@ -137,44 +137,42 @@ function ResultsContent() {
     <div className="space-y-8">
       {/* Results Header */}
       {data?.search && (
-        <div className="border border-taj-gray-border bg-white p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-1">
-            <span className="text-[11px] uppercase tracking-wider text-taj-gold-muted font-medium block">
-              Stay Parameters & Intelligence Scope
+        <div className="border border-taj-gray-border bg-white p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
+          <div className="space-y-1.5">
+            <span className="text-[11px] uppercase tracking-widest text-taj-gold-muted font-semibold block">
+              Official Rate Intelligence
             </span>
-            <h1 className="text-2xl sm:text-3xl font-serif text-taj-burgundy">
-              Taj Availability & Verified Rates
+            <h1 className="text-2xl sm:text-3xl font-serif text-taj-burgundy font-medium">
+              Taj Availability & Verified Public Tariffs
             </h1>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-taj-charcoal-light pt-1">
-              <span>Check-in: <strong>{data.search.checkIn}</strong></span>
-              <span>·</span>
-              <span>Check-out: <strong>{data.search.checkOut}</strong></span>
+            <div className="flex flex-wrap items-center gap-2.5 text-xs text-taj-charcoal-muted pt-1">
+              <span>{data.search.checkIn} to {data.search.checkOut}</span>
               <span>·</span>
               <span>{data.search.adults} Adults, {data.search.rooms} Room</span>
               <span>·</span>
-              <span>{data.summary.totalPropertiesMonitored} Properties Monitored</span>
+              <span className="text-taj-burgundy font-medium">Non-Member Public Rates · 18% GST Included</span>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <button
               onClick={handleFetchLatest}
               disabled={fetching}
-              className="px-5 py-3 bg-white hover:bg-taj-cream text-taj-burgundy text-xs uppercase tracking-wider font-medium border border-taj-burgundy transition-colors disabled:opacity-50"
+              className="px-5 py-3 bg-taj-burgundy hover:bg-taj-burgundy-deep text-white text-xs uppercase tracking-widest font-medium transition-colors disabled:opacity-50 text-center shadow-xs"
             >
-              {fetching ? 'Checking Taj Booking Systems…' : 'Fetch Latest Verified Prices'}
+              {fetching ? 'Checking Taj Booking Systems…' : 'Refresh Live Rates'}
             </button>
             <Link
               href="/"
-              className="px-4 py-3 text-xs uppercase tracking-wider text-taj-charcoal-muted hover:text-taj-burgundy border border-taj-gray-border"
+              className="px-4 py-3 text-xs uppercase tracking-widest text-taj-charcoal hover:text-taj-burgundy border border-taj-gray-border hover:border-taj-burgundy transition-colors text-center"
             >
-              Modify Dates
+              Modify Stay
             </Link>
           </div>
         </div>
       )}
 
-      {/* Live Agent Fetch Pipeline per 01-PRODUCT-AND-UI.md §8.1 */}
+      {/* Live Agent Fetch Pipeline */}
       {fetching && (
         <AgentLivePipeline
           statusText={fetchProgress}
@@ -208,7 +206,7 @@ function ResultsContent() {
           </Link>
         </div>
       ) : data.summary?.propertiesWithVerifiedData === 0 ? (
-        /* Honest Empty State per 01-PRODUCT-AND-UI.md §8.1 & Phase 4 Gate */
+        /* Honest Empty State per User Instruction: No Mock Results */
         <EmptySearchState
           searchId={searchId}
           checkIn={data.search?.checkIn || ''}
@@ -219,7 +217,7 @@ function ResultsContent() {
         />
       ) : (
         <>
-          {/* Mobile-Only Dedicated Layout (Thumb Zone & 48px touch targets) */}
+          {/* Mobile-Only Dedicated Layout */}
           <MobileResultsView
             data={data}
             searchId={searchId || ''}
@@ -231,9 +229,9 @@ function ResultsContent() {
             setFlexibleOnly={setFlexibleOnly}
           />
 
-          {/* Desktop-Only Layout (Preserved Exactly) */}
+          {/* Desktop Layout */}
           <div className="hidden md:block space-y-10">
-          {/* Featured Cheapest Available Card */}
+          {/* Featured Lowest Available Card */}
           {data?.cheapestAvailable && (
             <section className="space-y-3">
               <FeaturedCheapestCard
@@ -243,11 +241,11 @@ function ResultsContent() {
             </section>
           )}
 
-          {/* Filter Bar per 01-PRODUCT-AND-UI.md §8.8 */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-taj-gray-border pb-4">
-            <div className="flex items-center gap-4">
-              <span className="text-xs text-taj-gray-warm uppercase tracking-wider">
-                Filter By Terms:
+          {/* Filter Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-taj-gray-border/60 pb-4">
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-taj-gray-warm uppercase tracking-wider font-medium">
+                Filter:
               </span>
               <button
                 onClick={() => setMealFilter(mealFilter === 'breakfast' ? 'all' : 'breakfast')}
@@ -272,7 +270,7 @@ function ResultsContent() {
             </div>
 
             <div className="text-xs text-taj-gray-warm">
-              Showing {(data.results || []).length} eligible properties
+              Showing {(data.results || []).length} verified Taj properties
             </div>
           </div>
 
@@ -289,22 +287,25 @@ function ResultsContent() {
 
           {/* Unverified Hotels Section */}
           {(data.unverifiedHotels || []).length > 0 && (
-            <section className="border border-taj-gray-border bg-white p-6 space-y-4">
-              <div className="border-b border-taj-gray-border pb-3">
-                <h4 className="text-sm font-serif text-taj-burgundy font-medium">
-                  Properties Awaiting Initial Verification ({(data.unverifiedHotels || []).length})
+            <section className="border border-taj-gray-border bg-white p-6 sm:p-8 space-y-4">
+              <div className="border-b border-taj-gray-border/60 pb-3">
+                <h4 className="text-base font-serif text-taj-burgundy font-medium">
+                  Other Taj Properties Available ({(data.unverifiedHotels || []).length})
                 </h4>
                 <p className="text-xs text-taj-charcoal-muted mt-0.5">
-                  These Taj properties have no cached observations recorded for these exact dates.
-                  Tap 'Fetch Latest Verified Prices' above to query them.
+                  Select any property below to explore rooms or check live rates directly.
                 </p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-xs text-taj-charcoal">
                 {data.unverifiedHotels.map((h: any) => (
-                  <div key={h.hotelId} className="p-2 border border-taj-gray-border/60 bg-taj-cream/30">
-                    <p className="font-medium truncate">{h.canonicalName}</p>
-                    <p className="text-[11px] text-taj-gray-warm">{h.city}</p>
-                  </div>
+                  <Link
+                    key={h.hotelId}
+                    href={`/hotel/${h.slug}?searchId=${searchId}`}
+                    className="p-3 border border-taj-gray-border/60 bg-taj-cream/20 hover:border-taj-burgundy hover:bg-taj-cream/50 transition-colors group"
+                  >
+                    <p className="font-serif font-medium text-taj-charcoal group-hover:text-taj-burgundy truncate">{h.canonicalName}</p>
+                    <p className="text-[11px] text-taj-gray-warm mt-0.5">{h.city}</p>
+                  </Link>
                 ))}
               </div>
             </section>

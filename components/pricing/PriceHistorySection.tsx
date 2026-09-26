@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { PriceHistoryChart, SnapshotHistoryPoint } from '@/components/pricing/PriceHistoryChart';
 import { PriceStats } from '@/components/pricing/PriceStats';
 
@@ -17,10 +17,8 @@ export const PriceHistorySection: React.FC<PriceHistorySectionProps> = ({
   officialBookingUrl,
   hotelName,
 }) => {
-  const [snapshots, setSnapshots] = useState<SnapshotHistoryPoint[]>(initialSnapshots);
+  const [snapshots] = useState<SnapshotHistoryPoint[]>(initialSnapshots);
   const [selectedRoom, setSelectedRoom] = useState<string>('__all__');
-  const [isBackfilling, setIsBackfilling] = useState(false);
-  const [backfillDone, setBackfillDone] = useState(false);
 
   // Derive unique room names from snapshots
   const roomNames = React.useMemo(() => {
@@ -76,58 +74,16 @@ export const PriceHistorySection: React.FC<PriceHistorySectionProps> = ({
     };
   }, [filteredSnapshots]);
 
-  // Auto-backfill on first mount if insufficient data
-  const triggerBackfill = useCallback(async () => {
-    if (isBackfilling || backfillDone) return;
-    if (snapshots.length >= 30) {
-      setBackfillDone(true);
-      return;
-    }
-
-    setIsBackfilling(true);
-    try {
-      const res = await fetch(`/api/hotels/${slug}/backfill-history`, { method: 'POST' });
-      const data = await res.json();
-
-      if (data.success && !data.skipped && data.totalSnapshotsPersisted > 0) {
-        // Reload price history from the history API with a 40-day window
-        const histRes = await fetch(
-          `/api/hotels/${slug}/price-history?days=40`,
-          { cache: 'no-store' }
-        );
-        const histData = await histRes.json();
-        if (histData.success && Array.isArray(histData.snapshots) && histData.snapshots.length > 0) {
-          setSnapshots(histData.snapshots);
-        }
-      }
-    } catch (e) {
-      // Silently fail — chart will show whatever data is available
-      console.error('[PriceHistorySection] Backfill failed:', e);
-    } finally {
-      setIsBackfilling(false);
-      setBackfillDone(true);
-    }
-  }, [slug, isBackfilling, backfillDone, snapshots.length]);
-
-  useEffect(() => {
-    // Small delay so the page renders first, then backfill in background
-    const timer = setTimeout(triggerBackfill, 800);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <div className="space-y-6">
-      {/* Section Header + Room Dropdown */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      {/* Section Header with Room Dropdown */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-taj-gray-border pb-4">
         <div>
-          <span className="text-[11px] uppercase tracking-widest text-taj-gold-muted font-medium block">
-            Price Intelligence
-          </span>
-          <h2 className="text-xl font-serif text-taj-burgundy mt-0.5">
-            40-Day Rate History
-          </h2>
-          <p className="text-xs text-taj-charcoal-muted mt-1">
-            Select a room category below to see its specific price history over the past 40 days.
+          <h3 className="text-xl font-serif text-taj-burgundy font-medium">
+            Historical Price Intelligence
+          </h3>
+          <p className="text-xs text-taj-charcoal-muted mt-0.5">
+            Verified public observation trends for this property.
           </p>
         </div>
 
@@ -156,14 +112,6 @@ export const PriceHistorySection: React.FC<PriceHistorySectionProps> = ({
         )}
       </div>
 
-      {/* Loading indicator during backfill */}
-      {isBackfilling && (
-        <div className="flex items-center gap-2 text-xs text-taj-gray-warm bg-taj-cream border border-taj-gray-border px-4 py-2">
-          <span className="inline-block w-3 h-3 border-2 border-taj-burgundy border-t-transparent rounded-full animate-spin" />
-          <span>Loading price history…</span>
-        </div>
-      )}
-
       {/* Chart */}
       {filteredSnapshots.length > 0 ? (
         <PriceHistoryChart
@@ -176,14 +124,12 @@ export const PriceHistorySection: React.FC<PriceHistorySectionProps> = ({
         />
       ) : (
         <div className="border border-taj-gray-border bg-white p-8 text-center text-xs text-taj-gray-warm">
-          {isBackfilling
-            ? 'Fetching price history…'
-            : 'No historical price data available for this room category yet.'}
+          No historical price data recorded for this room category yet. Rates will be tracked as verifications occur.
         </div>
       )}
 
       {/* Stats */}
-      <PriceStats stats={stats} />
+      {stats && <PriceStats stats={stats} />}
     </div>
   );
 };

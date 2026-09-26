@@ -94,11 +94,11 @@ export const RoomRateTable: React.FC<RoomRateTableProps> = ({
           <thead>
             <tr className="border-b border-taj-gray-border bg-taj-cream text-taj-charcoal font-semibold uppercase tracking-wider text-[11px]">
               <th scope="col" className="py-3 px-4">Room & View</th>
-              <th scope="col" className="py-3 px-4">Rate Plan</th>
-              <th scope="col" className="py-3 px-4">Meal Plan</th>
+              <th scope="col" className="py-3 px-4">Public Rate Plan</th>
+              <th scope="col" className="py-3 px-4">Meal Option</th>
               <th scope="col" className="py-3 px-4">Cancellation Terms</th>
-              <th scope="col" className="py-3 px-4 text-right">Nightly</th>
-              <th scope="col" className="py-3 px-4 text-right">Total ({nights}N)</th>
+              <th scope="col" className="py-3 px-4 text-right">Base / Night</th>
+              <th scope="col" className="py-3 px-4 text-right">Total ({nights}N incl. 18% GST)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-taj-gray-border">
@@ -113,10 +113,10 @@ export const RoomRateTable: React.FC<RoomRateTableProps> = ({
                     onClick={() => toggleRoom(roomName)}
                     className="bg-white hover:bg-taj-cream/30 cursor-pointer transition-colors"
                   >
-                    <td colSpan={6} className="py-3 px-4">
+                    <td colSpan={6} className="py-3.5 px-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="w-4 h-4 flex items-center justify-center border border-taj-gray-border text-taj-burgundy text-[10px] font-bold">
+                          <span className="w-5 h-5 flex items-center justify-center border border-taj-gray-border text-taj-burgundy text-xs font-bold">
                             {isExpanded ? '−' : '+'}
                           </span>
                           <div>
@@ -141,47 +141,57 @@ export const RoomRateTable: React.FC<RoomRateTableProps> = ({
 
                   {/* Expanded Rates Rows */}
                   {isExpanded &&
-                    rates.map((rate, idx) => (
-                      <tr
-                        key={rate.id || idx}
-                        className="bg-taj-cream/10 hover:bg-taj-cream/40 transition-colors border-t border-taj-gray-border/50"
-                      >
-                        <td className="py-3.5 px-4 pl-11 text-taj-charcoal-light">
-                          <span className="text-[11px] block text-taj-gray-warm">
-                            {rate.sourceRoomName}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 font-medium text-taj-charcoal">
-                          {rate.ratePlan}
-                        </td>
-                        <td className="py-3.5 px-4 text-taj-charcoal-light">
-                          {rate.mealPlan}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span
-                            className={`inline-block px-2 py-0.5 text-[10px] border ${
-                              rate.isFlexible
-                                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                                : 'bg-stone-50 text-stone-700 border-stone-200'
-                            }`}
-                          >
-                            {rate.cancellationPolicy}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <PriceDisplay amount={rate.pricePerNight} size="sm" />
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          {rate.totalPrice ? (
-                            <span className="price-tabular font-medium text-taj-charcoal">
-                              ₹{rate.totalPrice.toLocaleString('en-IN')}
+                    rates.map((rate, idx) => {
+                      const isBreakfast = rate.mealPlan?.toLowerCase().includes('breakfast');
+                      const calculatedTotal = rate.totalPrice || Math.round(rate.pricePerNight * nights * 1.18);
+
+                      return (
+                        <tr
+                          key={rate.id || idx}
+                          className="bg-taj-cream/10 hover:bg-taj-cream/40 transition-colors border-t border-taj-gray-border/50"
+                        >
+                          <td className="py-3.5 px-4 pl-11 text-taj-charcoal-light">
+                            <span className="text-[11px] block text-taj-gray-warm">
+                              {rate.sourceRoomName}
                             </span>
-                          ) : (
-                            <span className="text-taj-gray-warm italic">Taxes at check-in</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="py-3.5 px-4 font-medium text-taj-charcoal">
+                            {rate.ratePlan}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium border ${
+                                isBreakfast
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                  : 'bg-stone-50 text-taj-charcoal border-stone-200'
+                              }`}
+                            >
+                              <span>{isBreakfast ? '☕' : '🍽️'}</span>
+                              <span>{rate.mealPlan || 'Room only'}</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span
+                              className={`inline-block px-2 py-0.5 text-[10px] border ${
+                                rate.isFlexible
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                  : 'bg-stone-50 text-stone-700 border-stone-200'
+                              }`}
+                            >
+                              {rate.cancellationPolicy}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <PriceDisplay amount={rate.pricePerNight} size="sm" />
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <span className="price-tabular font-medium text-taj-burgundy text-xs">
+                              ₹{calculatedTotal.toLocaleString('en-IN')}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </React.Fragment>
               );
             })}

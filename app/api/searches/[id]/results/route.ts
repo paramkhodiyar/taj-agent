@@ -54,6 +54,12 @@ export async function GET(
           whereClause.ratePlan = { isFlexible: true };
         }
 
+        // Strictly exclude member-only rates to guarantee non-member public tariff accuracy
+        whereClause.NOT = [
+          { cancellationPolicy: { contains: 'member', mode: 'insensitive' } },
+          { ratePlan: { canonicalRateName: { contains: 'member', mode: 'insensitive' } } },
+        ];
+
         // Fetch cheapest room/rate among the latest observations
         const latestObservation = await prisma.priceSnapshot.findFirst({
           where: whereClause,
@@ -102,6 +108,13 @@ export async function GET(
         const currentPrice = Number(latestObservation.pricePerNight);
         const isNearLow = low30D !== null && currentPrice <= low30D * 1.05;
 
+        // Calculate stay duration in nights
+        const diffMs = search.checkOut.getTime() - search.checkIn.getTime();
+        const nights = Math.max(1, Math.round(diffMs / (1000 * 60 * 60 * 24)));
+        const taxAmount = latestObservation.taxAmount ? Number(latestObservation.taxAmount) : Math.round(currentPrice * 0.18 * nights);
+        const totalPrice = latestObservation.totalPrice ? Number(latestObservation.totalPrice) : (currentPrice * nights) + taxAmount;
+        const priceWithGst = Math.round(currentPrice + (taxAmount / nights));
+
         return {
           hotelId: hotel.id,
           canonicalName: hotel.canonicalName,
@@ -117,14 +130,15 @@ export async function GET(
           cheapestOption: {
             snapshotId: latestObservation.id,
             pricePerNight: currentPrice,
-            totalPrice: latestObservation.totalPrice ? Number(latestObservation.totalPrice) : null,
-            basePrice: latestObservation.basePrice ? Number(latestObservation.basePrice) : null,
-            taxAmount: latestObservation.taxAmount ? Number(latestObservation.taxAmount) : null,
+            priceWithGst,
+            totalPrice,
+            basePrice: latestObservation.basePrice ? Number(latestObservation.basePrice) : currentPrice,
+            taxAmount,
             currency: latestObservation.currency,
             room: latestObservation.room.canonicalRoomName,
             sourceRoomName: latestObservation.room.sourceRoomName,
             ratePlan: latestObservation.ratePlan.canonicalRateName,
-            mealPlan: latestObservation.mealPlan || latestObservation.ratePlan.mealPlan,
+            mealPlan: latestObservation.mealPlan || latestObservation.ratePlan.mealPlan || 'Room only',
             cancellationPolicy: latestObservation.cancellationPolicy || latestObservation.ratePlan.cancellationPolicy,
             isFlexible: latestObservation.ratePlan.isFlexible,
             verificationState: latestObservation.verificationState,
