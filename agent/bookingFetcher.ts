@@ -1,4 +1,5 @@
 import { ResolvedProperty, SearchRequest, RawBookingResponse, RawBookingRecord } from './types';
+import { scrapeLiveTajHudiniInventory } from './tajHudiniScraper';
 
 export interface BookingFetchOptions {
   simulateFailure?: 'TIMEOUT' | 'RATE_LIMIT' | 'CAPTCHA' | 'NETWORK_ERROR' | 'SOLD_OUT';
@@ -227,8 +228,27 @@ export async function fetch_booking_inventory(
     };
   }
 
-  // Live Web Extraction via Agentic AI
+  // Live Web Extraction directly from Taj Hudini Booking Engine
   try {
+    const directHudiniRecords = await scrapeLiveTajHudiniInventory(hotel, search);
+    if (directHudiniRecords !== null) {
+      return {
+        hotelId: hotel.hotelId,
+        timestamp,
+        durationMs: Date.now() - startTime,
+        statusCode: 200,
+        records: directHudiniRecords,
+        rawPayload: {
+          hotelId: hotel.hotelId,
+          url: hotel.officialBookingUrl,
+          queriedAt: timestamp.toISOString(),
+          inventoryCount: directHudiniRecords.length,
+          source: 'taj_official_hudini',
+        },
+      };
+    }
+
+    // Fallback: Agentic AI Web Extraction
     const liveRecords = await extractLiveTajInventoryViaAgent(hotel, search);
 
     // HONEST TRANSPARENCY: If no live records could be fetched, return empty array.

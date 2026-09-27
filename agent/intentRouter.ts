@@ -436,7 +436,7 @@ async function handleHotelInfoRagIntent(query: string, startTime: number): Promi
         rooms: true,
         priceSnapshots: {
           where: { verificationState: { in: ['VERIFIED', 'PARTIALLY_VERIFIED'] } },
-          orderBy: [{ pricePerNight: 'asc' }, { fetchedAt: 'desc' }],
+          orderBy: { fetchedAt: 'desc' },
           take: 1,
           include: { room: true, ratePlan: true },
         },
@@ -462,7 +462,7 @@ async function handleHotelInfoRagIntent(query: string, startTime: number): Promi
           rooms: true,
           priceSnapshots: {
             where: { verificationState: { in: ['VERIFIED', 'PARTIALLY_VERIFIED'] } },
-            orderBy: [{ pricePerNight: 'asc' }, { fetchedAt: 'desc' }],
+            orderBy: { fetchedAt: 'desc' },
             take: 1,
             include: { room: true, ratePlan: true },
           },
@@ -485,7 +485,7 @@ async function handleHotelInfoRagIntent(query: string, startTime: number): Promi
         rooms: true,
         priceSnapshots: {
           where: { verificationState: { in: ['VERIFIED', 'PARTIALLY_VERIFIED'] } },
-          orderBy: [{ pricePerNight: 'asc' }, { fetchedAt: 'desc' }],
+          orderBy: { fetchedAt: 'desc' },
           take: 1,
           include: { room: true, ratePlan: true },
         },
@@ -635,7 +635,7 @@ async function handleRecommendationIntent(query: string, startTime: number): Pro
     include: {
       priceSnapshots: {
         where: { verificationState: { in: ['VERIFIED', 'PARTIALLY_VERIFIED'] } },
-        orderBy: [{ pricePerNight: 'asc' }, { fetchedAt: 'desc' }],
+        orderBy: { fetchedAt: 'desc' },
         take: 1,
         include: { room: true, ratePlan: true },
       },

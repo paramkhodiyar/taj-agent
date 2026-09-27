@@ -60,10 +60,38 @@ export async function GET(
           { ratePlan: { canonicalRateName: { contains: 'member', mode: 'insensitive' } } },
         ];
 
-        // Fetch cheapest room/rate among the latest observations
-        const latestObservation = await prisma.priceSnapshot.findFirst({
+        // Find the most recent fetch run/timestamp for this property
+        const mostRecentRecord = await prisma.priceSnapshot.findFirst({
           where: whereClause,
-          orderBy: [{ pricePerNight: 'asc' }, { fetchedAt: 'desc' }],
+          orderBy: { fetchedAt: 'desc' },
+          select: { fetchRunId: true, fetchedAt: true },
+        });
+
+        if (!mostRecentRecord) {
+          return {
+            hotelId: hotel.id,
+            canonicalName: hotel.canonicalName,
+            slug: hotel.slug,
+            city: hotel.city,
+            state: hotel.state,
+            starRating: hotel.starRating,
+            heroImage: hotel.assets.find((a) => a.type === 'hero')?.url || hotel.assets[0]?.url || null,
+            images: hotel.assets.map((a) => a.url),
+            officialBookingUrl: hotel.officialBookingUrl,
+            hasObservation: false,
+            freshness: computeFreshness(null),
+            cheapestOption: null,
+          };
+        }
+
+        // Fetch cheapest room/rate strictly from this latest verified run
+        const latestRunWhere = mostRecentRecord.fetchRunId
+          ? { ...whereClause, fetchRunId: mostRecentRecord.fetchRunId }
+          : { ...whereClause, fetchedAt: { gte: new Date(mostRecentRecord.fetchedAt.getTime() - 60000) } };
+
+        const latestObservation = await prisma.priceSnapshot.findFirst({
+          where: latestRunWhere,
+          orderBy: [{ pricePerNight: 'asc' }],
           include: {
             room: true,
             ratePlan: true,
