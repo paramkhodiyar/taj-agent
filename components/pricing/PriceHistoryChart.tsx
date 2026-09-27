@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { formatIndianCurrency } from './PriceDisplay';
+import { AlertTriangle, ExternalLink } from 'lucide-react';
 
 export interface SnapshotHistoryPoint {
   id: string;
@@ -159,7 +160,8 @@ export const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
 
         {hasAnyRateChange && (
           <div className="bg-amber-50 border border-amber-300 px-3 py-1.5 text-xs text-amber-900 flex items-center gap-2">
-            <span className="font-bold">⚠️ Rate Plan Change Detected</span>
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+            <span className="font-bold">Rate Plan Change Detected</span>
             <span className="text-[11px] text-amber-800">
               Dashed lines indicate observations differing in meal plans or room inclusions.
             </span>
@@ -374,7 +376,7 @@ export const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
               title={`Visit official reservation page for ${hotelName || 'this Taj property'}`}
             >
               <span>Visit Official Taj Website</span>
-              <span className="text-xs">↗</span>
+              <ExternalLink className="w-3 h-3" />
             </a>
           ) : (
             <a
@@ -383,7 +385,8 @@ export const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-taj-burgundy text-white hover:bg-taj-burgundy-deep text-[11px] font-medium tracking-wider uppercase transition-colors"
             >
-              <span>Visit Taj Hotels ↗</span>
+              <span>Visit Taj Hotels</span>
+              <ExternalLink className="w-3 h-3" />
             </a>
           )}
         </div>

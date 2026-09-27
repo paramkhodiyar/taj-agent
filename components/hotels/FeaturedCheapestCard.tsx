@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { PriceDisplay } from '../pricing/PriceDisplay';
 import { FreshnessBadge } from '../pricing/FreshnessBadge';
+import { Coffee, Utensils, ShieldCheck, ArrowRight, ExternalLink } from 'lucide-react';
 
 interface FeaturedCheapestCardProps {
   hotel: {
@@ -147,7 +148,13 @@ export const FeaturedCheapestCard: React.FC<FeaturedCheapestCardProps> = ({ hote
             <div className="space-y-2.5 pt-1">
               {/* Meal Plan Highlight */}
               <div className="flex items-center gap-2.5 p-3 bg-taj-cream/50 border border-taj-gray-border/60">
-                <span className="text-base">{hasBreakfast ? '☕' : '🍽️'}</span>
+                <span className="w-8 h-8 rounded-lg bg-white border border-taj-gray-border/80 flex items-center justify-center shrink-0">
+                  {hasBreakfast ? (
+                    <Coffee className="w-4 h-4 text-emerald-700" />
+                  ) : (
+                    <Utensils className="w-4 h-4 text-stone-600" />
+                  )}
+                </span>
                 <div>
                   <span className="text-[10px] uppercase tracking-wider text-taj-gray-warm font-medium block">
                     Meal Option
@@ -160,7 +167,9 @@ export const FeaturedCheapestCard: React.FC<FeaturedCheapestCardProps> = ({ hote
 
               {/* Cancellation & Policy */}
               <div className="flex items-center gap-2.5 p-3 bg-taj-cream/50 border border-taj-gray-border/60">
-                <span className="text-base">🛡️</span>
+                <span className="w-8 h-8 rounded-lg bg-white border border-taj-gray-border/80 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                </span>
                 <div>
                   <span className="text-[10px] uppercase tracking-wider text-taj-gray-warm font-medium block">
                     Rate & Cancellation
@@ -209,7 +218,7 @@ export const FeaturedCheapestCard: React.FC<FeaturedCheapestCardProps> = ({ hote
                 className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-taj-burgundy hover:bg-taj-burgundy-deep text-white text-xs uppercase tracking-widest font-medium transition-colors text-center"
               >
                 <span>View All Rooms</span>
-                <span>→</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               {hotel.officialBookingUrl && (
                 <a
@@ -219,7 +228,7 @@ export const FeaturedCheapestCard: React.FC<FeaturedCheapestCardProps> = ({ hote
                   className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-3 border border-taj-burgundy/40 text-taj-burgundy hover:bg-taj-cream text-xs uppercase tracking-widest font-medium transition-colors text-center"
                 >
                   <span>Taj Official</span>
-                  <span className="text-sm">↗</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               )}
             </div>

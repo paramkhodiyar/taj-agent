@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { TajLogo3DLoader } from '@/components/3d/TajLogo3DLoader';
+import { Check, Circle } from 'lucide-react';
 
 interface AgentLivePipelineProps {
   statusText?: string | null;
@@ -128,13 +129,13 @@ export const AgentLivePipeline: React.FC<AgentLivePipelineProps> = ({
                 {/* Checkmark icon with smooth transition */}
                 <span className="shrink-0 mt-0.5 w-4 h-4 flex items-center justify-center">
                   {isDone ? (
-                    <span className="text-emerald-700 font-bold text-sm leading-none animate-in fade-in zoom-in duration-200">
-                      ✓
+                    <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center animate-in fade-in zoom-in duration-200 shadow-xs">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
                     </span>
                   ) : isActive ? (
                     <span className="w-2 h-2 rounded-full bg-taj-gold animate-ping inline-block" />
                   ) : (
-                    <span className="text-taj-gray-warm text-xs leading-none">○</span>
+                    <Circle className="w-2.5 h-2.5 text-taj-gray-warm stroke-[1.5]" />
                   )}
                 </span>
 

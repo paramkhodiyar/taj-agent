@@ -12,6 +12,7 @@ import { PriceHistorySection } from '@/components/pricing/PriceHistorySection';
 import { computeFreshness } from '@/lib/freshness';
 import { MobileStickyActionBar } from '@/components/mobile/MobileStickyActionBar';
 import { scrapeTaj30DayCalendarRates } from '@/agent/tajHudiniScraper';
+import { AlertCircle, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -245,7 +246,10 @@ export default async function HotelDetailPage({
         {/* Graceful Degradation Notice per 01-PRODUCT-AND-UI.md §7 & §8.10 */}
         {latestRefreshFailed && leadSnapshot && (
           <div className="p-4 bg-amber-50 border border-amber-300 text-xs text-amber-950 space-y-1">
-            <span className="font-semibold block">⚠️ Refresh Notice:</span>
+            <span className="font-semibold flex items-center gap-1.5">
+              <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+              <span>Refresh Notice:</span>
+            </span>
             <p>
               We couldn&apos;t reach Taj&apos;s booking system for this property during the most recent refresh attempt.
               Your last verified price from {freshness.label.toLowerCase()} is retained with 100% fidelity and shown below.
@@ -299,7 +303,7 @@ export default async function HotelDetailPage({
                     className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-taj-burgundy text-white hover:bg-taj-burgundy-deep text-xs uppercase tracking-wider font-medium transition-colors"
                   >
                     <span>Book on Official Taj Website</span>
-                    <span className="text-sm">↗</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
               )}
@@ -352,9 +356,10 @@ export default async function HotelDetailPage({
                   href={hotel.officialBookingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block text-xs uppercase tracking-wider text-taj-gold-muted hover:underline font-medium"
+                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider text-taj-gold-muted hover:underline font-medium"
                 >
-                  Visit Taj Official Website ↗
+                  <span>Visit Taj Official Website</span>
+                  <ExternalLink className="w-3 h-3" />
                 </a>
               ) : (
                 <span className="text-taj-gray-warm">Official Portal</span>

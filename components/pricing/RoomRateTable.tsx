@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { PriceDisplay } from './PriceDisplay';
+import { Coffee, Utensils } from 'lucide-react';
 
 interface RoomRateItem {
   id: string;
@@ -166,8 +167,14 @@ export const RoomRateTable: React.FC<RoomRateTableProps> = ({
                                   : 'bg-stone-50 text-taj-charcoal border-stone-200'
                               }`}
                             >
-                              <span>{isBreakfast ? '☕' : '🍽️'}</span>
-                              <span>{rate.mealPlan || 'Room only'}</span>
+                              <span className="flex items-center gap-1.5">
+                                {isBreakfast ? (
+                                  <Coffee className="w-3.5 h-3.5 text-emerald-700" />
+                                ) : (
+                                  <Utensils className="w-3.5 h-3.5 text-stone-600" />
+                                )}
+                                <span>{rate.mealPlan || 'Room only'}</span>
+                              </span>
                             </span>
                           </td>
                           <td className="py-3.5 px-4">

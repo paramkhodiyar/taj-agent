@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { PriceDisplay } from '../pricing/PriceDisplay';
 import { FreshnessBadge } from '../pricing/FreshnessBadge';
+import { Coffee, Utensils, ExternalLink, ArrowRight } from 'lucide-react';
 
 interface HotelCardProps {
   hotel: {
@@ -135,13 +136,17 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
               {/* Meal & Cancellation Pills */}
               <div className="flex flex-wrap gap-1.5 pt-0.5">
                 <span
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium border ${
+                  className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium border ${
                     hasBreakfast
                       ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                       : 'bg-taj-cream text-taj-charcoal border-taj-gray-border'
                   }`}
                 >
-                  <span>{hasBreakfast ? '☕' : '🍽️'}</span>
+                  {hasBreakfast ? (
+                    <Coffee className="w-3 h-3 text-emerald-700" />
+                  ) : (
+                    <Utensils className="w-3 h-3 text-stone-600" />
+                  )}
                   <span>{opt.mealPlan || (hasBreakfast ? 'Breakfast Included' : 'Room Only')}</span>
                 </span>
 
@@ -186,17 +191,19 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, searchId }) => {
               href={hotel.officialBookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs uppercase tracking-wider text-taj-gold-muted hover:text-taj-burgundy font-medium px-2.5 py-1.5 border border-taj-gray-border hover:border-taj-burgundy transition-colors"
+              className="inline-flex items-center gap-1 text-xs uppercase tracking-wider text-taj-gold-muted hover:text-taj-burgundy font-medium px-2.5 py-1.5 border border-taj-gray-border hover:border-taj-burgundy transition-colors"
               title={`Visit official reservation page for ${hotel.canonicalName}`}
             >
-              Taj ↗
+              <span>Taj</span>
+              <ExternalLink className="w-3 h-3" />
             </a>
           )}
           <Link
             href={`/hotel/${hotel.slug}?searchId=${searchId}`}
-            className="text-xs uppercase tracking-wider font-medium text-white bg-taj-burgundy hover:bg-taj-burgundy-deep px-3.5 py-1.5 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-medium text-white bg-taj-burgundy hover:bg-taj-burgundy-deep px-3.5 py-1.5 transition-colors"
           >
-            Details →
+            <span>Details</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>

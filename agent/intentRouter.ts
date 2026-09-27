@@ -656,7 +656,7 @@ async function handleRecommendationIntent(query: string, startTime: number): Pro
       ? `₹${Number(snap.pricePerNight).toLocaleString('en-IN')} / night (${snap.room?.canonicalRoomName || 'Standard Room'}, ${snap.ratePlan?.canonicalRateName || 'Best Available Rate'})`
       : 'Rates verified upon live date query';
 
-    recommendationText += `${index + 1}. 🏰 ${h.canonicalName} (${h.city}, ${h.state})\n`;
+    recommendationText += `${index + 1}. ${h.canonicalName} (${h.city}, ${h.state})\n`;
     recommendationText += `   • Nightly Lead Rate: ${rateText}\n`;
     recommendationText += `   • Highlights: ${(h.description || 'Iconic luxury Taj hospitality property').slice(0, 140)}…\n\n`;
 

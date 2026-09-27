@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Calendar, ArrowRight } from 'lucide-react';
 import { getHolidaysInStayRange, getUpcomingLongWeekends } from '@/lib/holidays';
 import { LuxuryDatePicker } from './LuxuryDatePicker';
 
@@ -168,7 +168,8 @@ export const SearchForm: React.FC = () => {
         {/* Holiday Banner if matching */}
         {activeHolidays.length > 0 && (
           <div className="mt-4 p-2.5 bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-center gap-2">
-            <span className="font-semibold">🗓️ Holiday Alert:</span>
+            <Calendar className="w-4 h-4 text-amber-700 shrink-0" />
+            <span className="font-semibold">Holiday Alert:</span>
             <span>{activeHolidays.map((h) => `${h.name} (${h.date})`).join(', ')}. Peak demand period. Mid-week stays offer greater flexibility.</span>
           </div>
         )}

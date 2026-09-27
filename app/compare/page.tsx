@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { TajPageLoader } from '@/components/layout/TajPageLoader';
 import Link from 'next/link';
+import { Check, X, Zap, Clock, ExternalLink, ArrowRight } from 'lucide-react';
 import type { CompareApiResponse, HotelCompareResult } from '@/app/api/compare/route';
 
 // ─── All Taj properties for the picker ──────────────────────────────────────
@@ -65,8 +66,16 @@ function AmenityDot({ value }: { value: boolean | null }) {
   if (value === null)
     return <span className="inline-block w-4 h-4 rounded-full bg-stone-200 border border-stone-300" title="Not confirmed" />;
   if (value)
-    return <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500 text-white text-[9px] font-bold" title="Available">✓</span>;
-  return <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-stone-300 text-stone-600 text-[9px] font-bold" title="Not available">✗</span>;
+    return (
+      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-600 text-white" title="Available">
+        <Check className="w-2.5 h-2.5 stroke-[3]" />
+      </span>
+    );
+  return (
+    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-stone-200 text-stone-600" title="Not available">
+      <X className="w-2.5 h-2.5 stroke-[3]" />
+    </span>
+  );
 }
 
 function ConfidenceBadge({ confidence }: { confidence: HotelCompareResult['dataConfidence'] }) {
@@ -407,7 +416,10 @@ function CompareContent() {
                 Searching…
               </>
             ) : (
-              '⚡ Compare Now'
+              <span className="inline-flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5" />
+                <span>Compare Now</span>
+              </span>
             )}
           </button>
         </div>
@@ -434,7 +446,7 @@ function CompareContent() {
           {rateLimitWarning && (
             <div className="p-4 bg-amber-50 border border-amber-300 space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-amber-600 font-bold">⏳</span>
+                <Clock className="w-4 h-4 text-amber-700 shrink-0" />
                 <span className="text-xs font-semibold text-amber-900">Temporary Search Limit Reached</span>
               </div>
               <p className="text-xs text-amber-800 leading-relaxed">{rateLimitWarning}</p>
@@ -459,9 +471,16 @@ function CompareContent() {
                 </div>
                 <button
                   onClick={handleCopyLink}
-                  className="px-4 py-2 bg-white border border-taj-gray-border text-xs text-taj-charcoal hover:border-taj-burgundy transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-taj-gray-border text-xs text-taj-charcoal hover:border-taj-burgundy transition-colors"
                 >
-                  {copied ? '✓ Link Copied' : 'Share Comparison'}
+                  {copied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Link Copied</span>
+                    </>
+                  ) : (
+                    <span>Share Comparison</span>
+                  )}
                 </button>
               </div>
 
@@ -747,7 +766,10 @@ function CompareContent() {
                         {h.missingFields.join(', ')}
                       </span>
                     ) : (
-                      <span className="text-[11px] text-emerald-700">All fields found ✓</span>
+                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700">
+                        <span>All fields found</span>
+                        <Check className="w-3 h-3 text-emerald-600" />
+                      </span>
                     )
                   )}
                 />
@@ -757,17 +779,19 @@ function CompareContent() {
                     <div className="flex flex-col gap-2">
                       <Link
                         href={`/hotel/${h.slug}`}
-                        className="inline-block px-3 py-1.5 text-[11px] uppercase tracking-wider text-taj-burgundy border border-taj-burgundy/40 hover:bg-taj-burgundy hover:text-white transition-colors"
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] uppercase tracking-wider text-taj-burgundy border border-taj-burgundy/40 hover:bg-taj-burgundy hover:text-white transition-colors"
                       >
-                        Price History →
+                        <span>Price History</span>
+                        <ArrowRight className="w-3 h-3" />
                       </Link>
                       <a
                         href={h.officialBookingUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block px-3 py-1.5 text-[11px] uppercase tracking-wider text-taj-gold-muted border border-taj-gold-muted/40 hover:bg-taj-gold-muted hover:text-white transition-colors"
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] uppercase tracking-wider text-taj-gold-muted border border-taj-gold-muted/40 hover:bg-taj-gold-muted hover:text-white transition-colors"
                       >
-                        Book on Taj.com ↗
+                        <span>Book on Taj.com</span>
+                        <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>
                   ))}
