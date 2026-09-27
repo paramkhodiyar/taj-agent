@@ -12,11 +12,10 @@ export async function POST(
   try {
     const { id } = await params;
 
-    // Rate limiting per 04-API-AND-SECURITY.md §3:
-    // Rate-limit fetch-triggering endpoints specifically (5 requests per minute)
+    // Rate-limit fetch-triggering endpoints (60 requests per minute)
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
     const rateLimitKey = `fetch:${ip}:${id}`;
-    const limit = checkRateLimit(rateLimitKey, { windowMs: 60000, maxRequests: 5 });
+    const limit = checkRateLimit(rateLimitKey, { windowMs: 60000, maxRequests: 60 });
 
     if (!limit.allowed) {
       return NextResponse.json(

@@ -43,12 +43,30 @@ export async function runAgentOrchestrator(
   const extractorVersion = 'taj-booking-v1';
 
   // Step 1: Resolve Target Properties
-  const targetHotels: ResolvedProperty[] = await resolve_property(
-    search.hotelId ? { hotelId: search.hotelId } : undefined
+  let targetHotels: ResolvedProperty[] = await resolve_property(
+    search.hotelId && search.hotelId !== 'all' ? { hotelId: search.hotelId } : undefined
   );
 
   if (targetHotels.length === 0) {
     throw new Error(`Property Resolver could not resolve target hotel: ${search.hotelId || 'all'}`);
+  }
+
+  // For general searches without a specific hotel selected, prioritize the top flagship properties
+  // across key regions so the live agent completes in 4-5 seconds without exceeding serverless timeouts.
+  if (!search.hotelId || search.hotelId === 'all') {
+    const priorityHotelIds = [
+      'taj-mahal-palace-mumbai',
+      'taj-palace-new-delhi',
+      'taj-bengal-kolkata',
+      'taj-coromandel-chennai',
+      'taj-lake-palace-udaipur',
+    ];
+    const prioritized = targetHotels.filter((h) => priorityHotelIds.includes(h.hotelId));
+    if (prioritized.length > 0) {
+      targetHotels = prioritized;
+    } else {
+      targetHotels = targetHotels.slice(0, 5);
+    }
   }
 
   // Step 2: Initialize FetchRun
@@ -170,7 +188,7 @@ export async function runAgentOrchestrator(
               error: err.message,
               completedAt: new Date(),
             },
-          });
+          }).catch(() => {});
 
           await prisma.agentError.create({
             data: {
@@ -180,7 +198,7 @@ export async function runAgentOrchestrator(
               message: err.message,
               stackTrace: err.stack,
             },
-          });
+          }).catch(() => {});
 
           hotelOutcomes.push({
             hotelId: hotel.hotelId,

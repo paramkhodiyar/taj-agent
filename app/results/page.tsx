@@ -27,6 +27,9 @@ function ResultsContent() {
   const [mealFilter, setMealFilter] = useState<'all' | 'breakfast'>('all');
   const [flexibleOnly, setFlexibleOnly] = useState(false);
 
+  const autoFetchedRef = React.useRef(false);
+  const [fetchCompleted, setFetchCompleted] = useState(false);
+
   const loadResults = async () => {
     if (!searchId) return;
     setLoading(true);
@@ -59,9 +62,15 @@ function ResultsContent() {
     loadResults();
   }, [searchId, mealFilter, flexibleOnly]);
 
-  // Automatically launch the live agentic fetch when user triggers a search
+  // Automatically launch the live agentic fetch once when user arrives with autoFetch=true
   useEffect(() => {
-    if (autoFetch && searchId && !fetching) {
+    if (autoFetch && searchId && !autoFetchedRef.current) {
+      autoFetchedRef.current = true;
+      if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('autoFetch');
+        window.history.replaceState({}, '', url.pathname + url.search);
+      }
       handleFetchLatest();
     }
   }, [searchId, autoFetch]);
@@ -87,22 +96,30 @@ function ResultsContent() {
   }, [searchId, loading]);
 
   const handleFetchLatest = async () => {
-    if (!searchId) return;
+    if (!searchId || fetching) return;
     setFetching(true);
+    setFetchCompleted(false);
+    setError(null);
     setFetchProgress('Taj Intelligence Agent: Extracting official verified inventory across properties…');
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s safety limit
+
       const res = await fetch(`/api/searches/${searchId}/fetch`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       const json = await res.json();
       if (!res.ok || !json.success) {
         throw new Error(json.error || 'Failed to refresh prices');
       }
 
+      setFetchCompleted(true);
       setFetchProgress(
         `Completed: ${json.successfulHotels}/${json.requestedHotels} properties verified. ${json.totalSnapshotsPersisted} snapshots persisted.`
       );
@@ -110,12 +127,17 @@ function ResultsContent() {
       // Reload results from DB
       await loadResults();
     } catch (err: any) {
-      setError(err.message || 'Fetch request failed');
+      setError(
+        err.name === 'AbortError'
+          ? 'Live rate verification took longer than expected. Please try refreshing again.'
+          : (err.message || 'Fetch request failed')
+      );
     } finally {
       setTimeout(() => {
         setFetching(false);
+        setFetchCompleted(false);
         setFetchProgress(null);
-      }, 2500);
+      }, 1600);
     }
   };
 
@@ -172,15 +194,6 @@ function ResultsContent() {
         </div>
       )}
 
-      {/* Live Agent Fetch Pipeline */}
-      {fetching && (
-        <AgentLivePipeline
-          statusText={fetchProgress}
-          checkIn={data?.search?.checkIn}
-          checkOut={data?.search?.checkOut}
-        />
-      )}
-
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 text-xs text-taj-status-failed">
           {error}
@@ -192,6 +205,14 @@ function ResultsContent() {
           title="Finding Verified Taj Rates"
           subtitle="Checking official rates and real-time availability across properties…"
           type="results"
+        />
+      ) : fetching ? (
+        /* Dedicated Live Agent Pipeline view while fetching is active */
+        <AgentLivePipeline
+          statusText={fetchProgress}
+          checkIn={data?.search?.checkIn}
+          checkOut={data?.search?.checkOut}
+          isCompleted={fetchCompleted}
         />
       ) : !data ? (
         <div className="py-20 text-center space-y-4">
